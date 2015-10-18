@@ -200,7 +200,7 @@ void printDistances(double **dist, int n, int m)
     int i,j =0;
     FILE *file;
     char filename[1000];
-    sprintf(filename, "Output/distance_N%d_M%d.dat",n,m);
+    sprintf(filename, "Output_Normed/distance_N%d_M%d.dat",n,m);
     file = fopen(filename, "w");
 
     for(i=0; i<n; i++)
@@ -218,12 +218,12 @@ void printHistogram(double *histogram, int n, int m)
     int i =0;
     FILE *file;
     char filename[1000];
-    sprintf(filename, "Output/histogram_N%d_M%d.dat",n,m);
+    sprintf(filename, "Output_Normed/histogram_N%d_M%d.dat",n,m);
     file = fopen(filename, "w");
 
     for(i=1; i<n; i++)
     {
-        fprintf(file,"%d %f\n", i, histogram[i]);
+        fprintf(file,"%d %.10f\n", i, histogram[i]/(n*(n-1)/2));
 
     }
 }
