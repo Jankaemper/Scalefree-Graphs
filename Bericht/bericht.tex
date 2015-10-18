@@ -1,0 +1,66 @@
+\documentclass[10pt]{article}
+\usepackage{amsmath}
+\usepackage{paralist}
+\usepackage{setspace}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage[english]{babel}
+\usepackage{geometry}
+\usepackage{subcaption}
+
+
+\begin{document}
+\lstset{
+	language=C,
+	basicstyle=\footnotesize,
+	frame=tb,
+	xleftmargin=.2\textwidth,
+	xrightmargin=.2\textwidth
+}
+\onehalfspacing
+\input{titlepage.tex}
+\tableofcontents
+\newpage
+\section{Problemstellung}
+
+Ziel dieses Projektes ist es eine statistische Aussage über die Verteilung von kürzesten Wegen bei skalenfreien Graphen treffen zu können. In skalenfreien Graphen sind die Kanten pro Knoten nach einem Potenzgesetz verteilt. 
+
+\begin{align*}
+P(k) \tilde{*} k^{-\alpha}
+\end{align*}
+
+Die Erstellung von skalenfreien Graphen erfolgt anhand von speziellen Algorithmen. Der hier verwendete Algorithmus folgt dem Barabasi-Albert Model und nutzt die Methode Preferential Attachment. Dabei ist der Parameter m maßgeblich, der die Anzahl an Nachbarn eines neu hinzugefügten Knotens beschreibt. 
+
+Die Größe des Graphens wird über die Anzahl der Knoten n definiert. Um eine Aussage über die statistische Verteilung der kürzesten Wege in unterschiedlichen Graphfamilien treffen zu können, müssen mehrere Simulationsläufe in Abhängikeit der Parameter n und m durchgeführt werden.
+
+\section{Programmentwurf}
+
+Um die Problemstellung wie gefordert bearbeiten zu können muss zunächst der skalenfreie Graph initiiert werden. Der dafür notwendige Algorithmus ist bereits implementiert und muss nur angewandt werden. Für den angelegten Graph gilt es nun die kürzesten Wege zu berechnen. D.h. für die gegebene Konfiguration muss für jeden Knoten der kürzeste Weg zu jedem einzelnen anderen Knoten berechnet werden. % Dies kann man sich anschaulich als quadratische symmetrische Matrix vorstellen.
+Um überhaupt eine Aussage über die Distanz treffen zu können muss den Kanten zunächst eine Wertigkeit bzw. Länge zugeschrieben werden. Für die Berechnung der kürzesten Wege muss laut Aufgabenstellung der Floyd-Warshall Algorithmus implementiert werden. 
+Wie bereits im vorherigen Kapitel beschrieben, müssen mehrere Durchläufe mit immer neu initiierten Graphen durchgeführt werden um eine statistische Aussage über die Verteilung der kürzesten Wege treffen zu können. Für das Programm bedeutet das, dass jeder Durchlauf und die dabei berechneten kürzesten Wege gespeichert und sortiert werden müssen. Für die Sortierung wird gezählt wie häufig eine berechnete Strecke innerhalb des Graphen vorkommt.
+Dadurch kann ein Histogramm erstellt werden, dass die Verteilung der kürzesten Wege darstellt.
+%\begin{figure}[h!]
+%	\center \includegraphics[width=80mm]{grafiken/mesh_optimized.png} 
+%	\caption{Extract of our optimized mesh}
+%	\label{fig:opt_mesh}
+%\end{figure}
+
+
+%\begin{figure}[h!]
+%\begin{subfigure}{.5\textwidth}
+%  \centering
+%  \includegraphics[width=.7\linewidth]{grafiken/simu_v70_u_streamlines.png}
+%  \caption{Original geometry}
+%  \label{fig:sfig1}
+%\end{subfigure}%
+%\begin{subfigure}{.5\textwidth}
+%  \centering
+%  \includegraphics[width=.7\linewidth]%{grafiken/simu_v70_u_opti_streamlines.png}
+%  \caption{Optimized geometry}
+%  \label{fig:sfig2}
+%\end{subfigure}
+%\caption{Streamlines}
+%\label{fig:streamlines}
+%\end{figure}
+%\textbf{}\\
+\end{document} 
