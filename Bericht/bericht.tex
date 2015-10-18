@@ -31,9 +31,14 @@ P(k) \tilde{*} k^{-\alpha}
 
 Die Erstellung von skalenfreien Graphen erfolgt anhand von speziellen Algorithmen. Der hier verwendete Algorithmus folgt dem Barabasi-Albert Model und nutzt die Methode Preferential Attachment. Dabei ist der Parameter m maßgeblich, der die Anzahl an Nachbarn eines neu hinzugefügten Knotens beschreibt. 
 
-Die Größe des Graphens wird über die Anzahl der Knoten n definiert. Es werden viele Simulationsläufe in Abhängikeit der Größen n und m durchgeführt, um eine Aussage über die statistische Verteilung der kürzesten Wege in unterschiedlichen Graphfamilien treffen zu können.
+Die Größe des Graphens wird über die Anzahl der Knoten n definiert. Um eine Aussage über die statistische Verteilung der kürzesten Wege in unterschiedlichen Graphfamilien treffen zu können, müssen mehrere Simulationsläufe in Abhängikeit der Parameter n und m durchgeführt werden.
 
+\section{Programmentwurf}
 
+Um die Problemstellung wie gefordert bearbeiten zu können muss zunächst der skalenfreie Graph initiiert werden. Der dafür notwendige Algorithmus ist bereits implementiert und muss nur angewandt werden. Für den angelegten Graph gilt es nun die kürzesten Wege zu berechnen. D.h. für die gegebene Konfiguration muss für jeden Knoten der kürzeste Weg zu jedem einzelnen anderen Knoten berechnet werden. % Dies kann man sich anschaulich als quadratische symmetrische Matrix vorstellen.
+Um überhaupt eine Aussage über die Distanz treffen zu können muss den Kanten zunächst eine Wertigkeit bzw. Länge zugeschrieben werden. Für die Berechnung der kürzesten Wege muss laut Aufgabenstellung der Floyd-Warshall Algorithmus implementiert werden. 
+Wie bereits im vorherigen Kapitel beschrieben, müssen mehrere Durchläufe mit immer neu initiierten Graphen durchgeführt werden um eine statistische Aussage über die Verteilung der kürzesten Wege treffen zu können. Für das Programm bedeutet das, dass jeder Durchlauf und die dabei berechneten kürzesten Wege gespeichert und sortiert werden müssen. Für die Sortierung wird gezählt wie häufig eine berechnete Strecke innerhalb des Graphen vorkommt.
+Dadurch kann ein Histogramm erstellt werden, dass die Verteilung der kürzesten Wege darstellt.
 %\begin{figure}[h!]
 %	\center \includegraphics[width=80mm]{grafiken/mesh_optimized.png} 
 %	\caption{Extract of our optimized mesh}
