@@ -218,13 +218,27 @@ void printHistogram(double *histogram, int n, int m)
     int i =0;
     FILE *file;
     char filename[1000];
+    sprintf(filename, "Output/histogram_N%d_M%d.dat",n,m);
+    file = fopen(filename, "w");
+
+    for(i=1; i<n; i++)
+    {
+        fprintf(file,"%d %.10f\n", i, histogram[i]);
+
+    }
+}
+
+void printHistogramNormed(double *histogram, int n, int m)
+{
+    int i =0;
+    FILE *file;
+    char filename[1000];
     sprintf(filename, "Output_Normed/histogram_N%d_M%d.dat",n,m);
     file = fopen(filename, "w");
 
     for(i=1; i<n; i++)
     {
         fprintf(file,"%d %.10f\n", i, histogram[i]/(n*(n-1)/2));
-
     }
 }
 
@@ -276,6 +290,18 @@ void computeShortestPaths(gs_graph_t *g,double **dist)
     }
 }
 
+void fillHistogram(double **dist, double **histogram, int n)
+{
+	int i,j;
+    for (i=0;i<n;i++)
+    {
+        for (j=i+1;j<n;j++)
+        {
+            (*histogram)[(int)dist[i][j]]++;
+        }
+    }
+}
+
 /**************runExperiments() **************/
 /**                                         **/
 /**                                         **/
@@ -284,9 +310,9 @@ void runExperiments(int runs, int n, int m)
 {
     int i,j,k;
     gs_graph_t *g;
-    double *histogram;
-    histogram = (double*)malloc(sizeof(double)*n);
 
+   
+    //init all arrays to 0
     double **dist;
     dist = (double**)malloc(sizeof(double*)*n);
     for (i=0;i<n;i++)
@@ -294,27 +320,31 @@ void runExperiments(int runs, int n, int m)
         dist[i] = (double*)malloc(sizeof(double)*n);
     }
 
+    //perform runs
+	double *histogram;
+    histogram = (double*)malloc(sizeof(double)*n);
     for (k=0;k<runs;k++)
     {
-        g = gs_create_graph(n);
-        gs_preferential_attachment(g, m);
+		//init scale free graph of size n
+	    g = gs_create_graph(n);
+	    gs_preferential_attachment(g, m);
 
-        computeShortestPaths(g,dist);
+		//compute all shortest paths with floyd warshall and 
+	    computeShortestPaths(g,dist);
 
-        for (i=0;i<n;i++)
-        {
-            for (j=i+1;j<n;j++)
-            {
-                histogram[(int)dist[i][j]]++;
-            }
-        }
+		//create histogram from distance matrix
+		fillHistogram(dist,&histogram,n);
     }
-    //TODO: free memory
+
+	//average histogram of shortest path lengths over number of runs
     for (i=0;i<n;i++)
     {
         histogram[i] = histogram[i]/runs;
     }
 
-    printHistogram(histogram,n,m);
+	//output in file
+    printHistogramNormed(histogram,n,m);
+
+	free(histogram);
 
 }
