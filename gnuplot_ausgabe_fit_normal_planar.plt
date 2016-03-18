@@ -21,5 +21,5 @@ f(x) = 1/((2*pi*std**2)**0.5) * exp(-(x-nu)**2/(2*std**2))
 std = 50
 nu = 6
 fit f(x) "OutputPlanar_Normed/histogram_N400.dat" via std, nu
-plot f(x), "Output_Normed/histogram_N400.dat"
+plot f(x), "OutputPlanar_Normed/histogram_N400.dat"
 

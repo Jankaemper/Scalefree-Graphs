@@ -48,7 +48,7 @@ int main(int argc, char **argv)
 
     num_nodes = atoi(argv[argz++]);
 
-    runExperimentsPlanar(10000,num_nodes);
+    runExperimentsPlanar(100,num_nodes);
     return(0);
 
 }

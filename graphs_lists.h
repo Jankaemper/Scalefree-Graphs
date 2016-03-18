@@ -6,6 +6,8 @@
 typedef struct
 {
     elem_t *neighbors;   /* pointer to list of neighbors */
+	double x_Coord;
+	double y_Coord;
 } gs_node_t;
 
 typedef struct

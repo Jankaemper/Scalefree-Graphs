@@ -2,7 +2,6 @@ set datafile missing '0.000000'
 set multiplot layout 2,2
 set key right reverse Right
 set title "nu=0.5"
-set logscale y
 f(x) = k * (C/x)**(l*x)
 k=1.2
 l=2.5
