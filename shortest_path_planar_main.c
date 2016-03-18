@@ -49,6 +49,7 @@ int main(int argc, char **argv)
     num_nodes = atoi(argv[argz++]);
 
     runExperimentsPlanar(100,num_nodes);
+	runMeanExperimentsPlanar(100,10);
     return(0);
 
 }

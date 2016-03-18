@@ -402,6 +402,24 @@ void fillHistogramContinuous(double **dist, double **histogram,int n, int numBin
     }
 }
 
+double computeMeanShortestPath(double **dist, int n)
+{
+	double sum;
+	int i,j, countExisting =0;
+    for (i=0;i<n;i++)
+    {
+        for (j=i+1;j<n;j++)
+        {
+			if (dist[i][j] != 100000)
+			{
+				countExisting ++;
+            	sum += dist[i][j];
+			}        
+		}
+    }
+	return sum/countExisting;
+}
+
 /**************runExperiments() **************/
 /**                                         **/
 /**                                         **/
@@ -469,6 +487,7 @@ void runExperimentsPlanar(int runs, int n)
 
     //perform runs
 	double *histogram;
+	double meanShortestPath;
 	//reasonable number of bins for histogram according to literature
 	int numBins = sqrt(n);
     histogram = (double*)malloc(sizeof(double)*numBins);
@@ -482,6 +501,7 @@ void runExperimentsPlanar(int runs, int n)
 
 		//create histogram from distance matrix
 		fillHistogramContinuous(dist,&histogram,n,numBins);
+		meanShortestPath += computeMeanShortestPath(dist,n);
     }
 	printDistances(dist,  n, 0, "OutputPlanar_Normed/dists.dat"); 
     printedges(g, n,  "OutputPlanar_Normed/edges.dat");
@@ -491,6 +511,7 @@ void runExperimentsPlanar(int runs, int n)
     {
         histogram[i] = histogram[i]/runs;
     }
+	meanShortestPath = meanShortestPath/runs;
 
 	//output in file
 	char filename[1000];
@@ -498,4 +519,45 @@ void runExperimentsPlanar(int runs, int n)
     printHistogramNormed(histogram, n, filename, numBins, 0);
 
 	free(histogram);
+}
+
+
+/**************runExperiments() **************/
+/**                                         **/
+/**                                         **/
+/*********************************************/
+void runMeanExperimentsPlanar(int runs, int stepSize)
+{
+    int i,j,k,n;
+    gs_graph_t *g;
+	FILE *file;
+    file = fopen("OutputPlanar_Normed/meanValues.dat", "w");
+	for (n = 10; n <= 500; n=n+stepSize)
+	{
+		//init all arrays to 0
+		double **dist;
+		dist = (double**)malloc(sizeof(double*)*n);
+		for (i=0;i<n;i++)
+		{
+		    dist[i] = (double*)malloc(sizeof(double)*n);
+		}
+
+		//perform runs
+		double meanShortestPath;
+		for (k=0;k<runs;k++)
+		{
+			//init planar graph evenly distributed in square [0,1]² of size n
+			g = gs_create_planar_graph(n,1,3);
+
+			//compute all shortest paths with floyd warshall and 
+			computeShortestPaths(g,dist,1);
+
+			//calc mean
+			meanShortestPath += computeMeanShortestPath(dist,n);
+		}
+	
+		meanShortestPath = meanShortestPath/runs;
+
+		fprintf(file,"%d %f\n", n, meanShortestPath);
+	}
 }

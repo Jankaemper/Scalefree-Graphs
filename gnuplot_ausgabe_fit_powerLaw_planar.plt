@@ -4,8 +4,8 @@ set key right reverse Right
 set title "nu=0.5"
 f(x) = k * (C/x)**(l*x)
 k=1.2
-l=2.5
-C=1.34
+l=2
+C=1.84
 fit f(x) "OutputPlanar_Normed/histogram_N50.dat" via k, l, C
 plot f(x), "OutputPlanar_Normed/histogram_N50.dat"
 g(x) = k_2 * (C_2/x)**(l_2*x)
