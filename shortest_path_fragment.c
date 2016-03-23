@@ -217,7 +217,6 @@ void graph_ausgabe(gs_graph_t *g, int num_nodes) {
 /**                m: Anzahl der neuen Kanten            **/
 /**                                                      **/
 /**********************************************************/
-
 void exportGraphDot(gs_graph_t *g,int n, int m)
 {
     int i =0;
@@ -239,8 +238,14 @@ void exportGraphDot(gs_graph_t *g,int n, int m)
     fprintf(file, "}");
 }
 
-//TODO: print to console
-void printDistances(double **dist, int n, int m,char destination[])
+/**************printDistances() **************/
+/** Writes the adjaceny matrix (distances) into a given file  **/
+/** PARAMETERS: (*)= return-parameter                    **/
+/**                dist: adajcency matrix                **/
+/**                n: Nodes                              **/
+/**                destination[]: Filename               **/
+/**********************************************************/
+void printDistances(double **dist, int n,char destination[])
 {
     int i,j =0;
     FILE *file;
@@ -256,6 +261,13 @@ void printDistances(double **dist, int n, int m,char destination[])
     }
 }
 
+/**************printedges() **************/
+/** Writes the adjacency structure into a given File     **/
+/** PARAMETERS: (*)= return-parameter                    **/
+/**                g: given graph                        **/
+/**                num_nodes: Nodes                      **/
+/**                destination[]: Filename               **/
+/*********************************************/
 void printedges(gs_graph_t *g, int num_nodes, char destination[]) {
   FILE *file;
   int i;
@@ -273,20 +285,38 @@ void printedges(gs_graph_t *g, int num_nodes, char destination[]) {
   }
 }
 
-
-void printHistogram(double *histogram, int n, int m, char destination[],int numBins, int startIndex)
+/**************printHistogram() **************/
+/** Writes the given histogram to the given destination file, each bin in a row    **/
+/** PARAMETERS: (*)= return-parameter                 							   **/
+/**                histogram: given histogram              					       **/
+/**                n: number of Nodes               					     	   **/
+/**                destination[]: Filename        							       **/
+/**                numBins: Histogram number of bins						       **/
+/**                startIndex: first bin to be printed 						       **/
+/*********************************************/
+void printHistogram(double *histogram, int n, char destination[],int numBins, int startIndex)
 {
     int i;
     FILE *file;
     file = fopen(destination, "w");
 
-    for(i=1; i<numBins; i++)
+    for(i=startIndex; i<numBins; i++)
     {
         fprintf(file,"%d %.10f\n", i, histogram[i]);
 
     }
 }
 
+/**************printHistogramNormed() **************/
+/** Writes the given histogram to the given destination file, each bin in a row    **/
+/** Bin Values will be normed to overall probablity 1 							   **/
+/** PARAMETERS: (*)= return-parameter                 							   **/
+/**                histogram: given histogram              					       **/
+/**                n: number of Nodes               					     	   **/
+/**                destination[]: Filename        							       **/
+/**                numBins: Histogram number of bins						       **/
+/**                startIndex: first bin to be printed 						       **/
+/*********************************************/
 void printHistogramNormed(double *histogram, int n, char destination[], int numBins, int startIndex)
 {
     int i;
@@ -299,6 +329,12 @@ void printHistogramNormed(double *histogram, int n, char destination[], int numB
     }
 }
 
+/**************computeShortestPaths() **************/
+/** executes the Floyd Warshall Algorithm on the given Graph   				**/
+/** PARAMETERS: (*)= return-parameter                 						**/
+/**                g: given graph              					       		**/
+/**                weighted: flag signaling if edges are weighted or not    **/
+/*********************************************/
 void computeShortestPaths(gs_graph_t *g,double **dist,int weighted)
 {
     int i,j,k =0;
@@ -325,10 +361,12 @@ void computeShortestPaths(gs_graph_t *g,double **dist,int weighted)
         next_neighb = g->node[i].neighbors;
         while(next_neighb != NULL)
         {
+			//if weighted is false, then all edges should have weight 1
 			if (weighted==0)
 			{
 				dist[i][next_neighb->info] = 1.0;
 			}
+			//if weighted is true, then all edges should have their euclidean distance as length
 			else
 			{
 				dist[i][next_neighb->info] = sqrt(pow(g->node[i].x_Coord - g->node[next_neighb->info].x_Coord,2)+pow(g->node[i].y_Coord - g->node[next_neighb->info].y_Coord,2));
@@ -336,7 +374,7 @@ void computeShortestPaths(gs_graph_t *g,double **dist,int weighted)
             next_neighb = next_neighb->next;
         }
     }
-    //start actual floid warshall after inits
+    //perform floid warshall algo
     for ( k=0; k<g->num_nodes;k++)
     {
         for ( i=0; i<g->num_nodes;i++)
@@ -352,6 +390,14 @@ void computeShortestPaths(gs_graph_t *g,double **dist,int weighted)
     }
 }
 
+/**************fillHistogramDiscrete() **************/
+/** for a given dist matrix with integer values   **/
+/** packs the distances (representing shortest paths) into bins of histogram 	   **/
+/** PARAMETERS: (*)= return-parameter                 							   **/
+/**                dist: distance matrix 			 						       **/
+/**                histogram: given histogram              					       **/
+/**                n: number of Nodes               					     	   **/
+/*********************************************/
 void fillHistogramDiscrete(double **dist, double **histogram, int n)
 {
 	int i,j;
@@ -364,6 +410,17 @@ void fillHistogramDiscrete(double **dist, double **histogram, int n)
     }
 }
 
+
+/**************fillHistogramContinuous() **************/
+/** for a given dist matrix and defined number of bins   **/
+/** packs the distances (representing shortest paths) into bin of histogram. 	   **/	
+/** Non existing paths between vertices will be ignored							   **/
+/** PARAMETERS: (*)= return-parameter                 							   **/
+/**                dist: distance matrix 			 						       **/
+/**                histogram: given histogram              					       **/
+/**                n: number of Nodes               					     	   **/
+/**                numBins: number of Bins             					     	   **/
+/*********************************************/
 void fillHistogramContinuous(double **dist, double **histogram,int n, int numBins)
 {
 	int i,j;
@@ -389,6 +446,7 @@ void fillHistogramContinuous(double **dist, double **histogram,int n, int numBin
 	//calc bin width
 	maxDist = maxDist + 0.000001;
 	double binWidth = (maxDist - minDist) / numBins;
+
 	//assign all pair-wise distances from matrix to histogram
     for (i=0;i<n;i++)
     {
@@ -402,6 +460,13 @@ void fillHistogramContinuous(double **dist, double **histogram,int n, int numBin
     }
 }
 
+/**************computeMeanShortestPath() **************/
+/** for a given dist matrix computes the mean value of   **/
+/** all shortes paths in graph. Non existing connections between vertices will be ignored  **/
+/** PARAMETERS: (*)= return-parameter                 							   **/
+/**                dist: distance matrix 			 						       **/
+/**                n: number of Nodes               					     	   **/
+/*********************************************/
 double computeMeanShortestPath(double **dist, int n)
 {
 	double sum;
@@ -420,9 +485,13 @@ double computeMeanShortestPath(double **dist, int n)
 	return sum/countExisting;
 }
 
-/**************runExperiments() **************/
-/**                                         **/
-/**                                         **/
+/**************runExperimentsPlanar() **************/
+/** creates scale-free graphs of fixed size and computes the histogram of  		   **/
+/** all shortes paths in graph 					   						 		   **/
+/** PARAMETERS: (*)= return-parameter                 							   **/
+/**                run: number of runs 			 						       	   **/
+/**                n: number of Nodes               					     	   **/
+/**                m: pref attachment parameter        					     	   **/
 /*********************************************/
 void runExperiments(int runs, int n, int m)
 {
@@ -430,7 +499,7 @@ void runExperiments(int runs, int n, int m)
     gs_graph_t *g;
 
    
-    //init all arrays to 0
+    //init dist array
     double **dist;
     dist = (double**)malloc(sizeof(double*)*n);
     for (i=0;i<n;i++)
@@ -468,16 +537,19 @@ void runExperiments(int runs, int n, int m)
 	free(histogram);
 }
 
-/**************runExperiments() **************/
-/**                                         **/
-/**                                         **/
+/**************runExperimentsPlanar() **************/
+/** creates graphs of fixed size on square [0,1]² and computes the histogram of  	**/
+/** all shortes paths in graph 													 	**/
+/** PARAMETERS: (*)= return-parameter                 							   	**/
+/**                run: number of runs 			 						       	   	**/
+/**                n: number of Nodes               					     	   	**/
 /*********************************************/
 void runExperimentsPlanar(int runs, int n)
 {
     int i,j,k;
     gs_graph_t *g;
 
-    //init all arrays to 0
+    //init dist array
     double **dist;
     dist = (double**)malloc(sizeof(double*)*n);
     for (i=0;i<n;i++)
@@ -487,7 +559,7 @@ void runExperimentsPlanar(int runs, int n)
 
     //perform runs
 	double *histogram;
-	double meanShortestPath;
+
 	//reasonable number of bins for histogram according to literature
 	int numBins = sqrt(n);
     histogram = (double*)malloc(sizeof(double)*numBins);
@@ -501,17 +573,15 @@ void runExperimentsPlanar(int runs, int n)
 
 		//create histogram from distance matrix
 		fillHistogramContinuous(dist,&histogram,n,numBins);
-		meanShortestPath += computeMeanShortestPath(dist,n);
     }
-	printDistances(dist,  n, 0, "OutputPlanar_Normed/dists.dat"); 
-    printedges(g, n,  "OutputPlanar_Normed/edges.dat");
+	//printDistances(dist,  n, 0, "OutputPlanar_Normed/dists.dat"); 
+    //printedges(g, n,  "OutputPlanar_Normed/edges.dat");
 	
 	//average histogram of shortest path lengths over number of runs
     for (i=0;i<numBins;i++)
     {
         histogram[i] = histogram[i]/runs;
     }
-	meanShortestPath = meanShortestPath/runs;
 
 	//output in file
 	char filename[1000];
@@ -522,9 +592,12 @@ void runExperimentsPlanar(int runs, int n)
 }
 
 
-/**************runExperiments() **************/
-/**                                         **/
-/**                                         **/
+/**************runMeanExperimentsPlanar() **************/
+/** creates graph of varying sizes and writes              **/
+/** mean length of shortest paths per graph size into file **/
+/** PARAMETERS: (*)= return-parameter                 							   **/
+/**                run: number of runs 			 						       	   **/
+/**                stepSize: step size for iterating over graph sizes	     	   **/
 /*********************************************/
 void runMeanExperimentsPlanar(int runs, int stepSize)
 {
@@ -532,6 +605,7 @@ void runMeanExperimentsPlanar(int runs, int stepSize)
     gs_graph_t *g;
 	FILE *file;
     file = fopen("OutputPlanar_Normed/meanValues.dat", "w");
+	//write mean distance for different graph sizes into file
 	for (n = 10; n <= 500; n=n+stepSize)
 	{
 		//init all arrays to 0
@@ -549,10 +623,10 @@ void runMeanExperimentsPlanar(int runs, int stepSize)
 			//init planar graph evenly distributed in square [0,1]² of size n
 			g = gs_create_planar_graph(n,1,3);
 
-			//compute all shortest paths with floyd warshall and 
+			//compute all shortest paths with floyd warshall and write result in dist matrix
 			computeShortestPaths(g,dist,1);
 
-			//calc mean
+			//calc mean over all distances
 			meanShortestPath += computeMeanShortestPath(dist,n);
 		}
 	

@@ -1,8 +1,7 @@
 /****************************************************************/
-/*** Main program for undirected graphs                       ***/
-/*** A.K. Hartmann January 2008                               ***/
-/*** Forgeschrittene Computersimulationen                     ***/
-/*** University of Oldenburg, Germany 2008                    ***/
+/*** Main program for experiments with scale-free graphs 			      		***/
+/*** Results (histogram in .dat files) in folders Output/ and  Output_Normed/	***/
+/*** For evaluation and fitting with gnuplot use: e.g. load "Plotscripts/gnuplot_ausgabe_fit_powerLaw_M2.plt"      ***/
 /****************************************************************/
 
 #include <stdio.h>
@@ -12,6 +11,8 @@
 #include "list.h"
 #include "graphs_lists.h"
 
+//test main used for debugging 
+//prints graph into dot-readable format in order to visualize the graph layout with all nodes and edges
 void testMain(int num_nodes,int m)
 {
     int i;
@@ -35,11 +36,12 @@ void testMain(int num_nodes,int m)
 
 int main(int argc, char **argv)
 {
-    int num_nodes;                             /* number of nodes in graph */
+    int num_nodes;                             
     gs_graph_t *g;
-    int num_real, m, i;                                /* number of realizations */
-    int argz = 1;                   /* for treating command line arguments */
+    int num_real, m, i;                        
+    int argz = 1;                 
 
+	//read command-line arguments
     if(argc != 3)
     {
         printf("USAGE %s <N> <m> \n", argv[0]);
@@ -47,12 +49,10 @@ int main(int argc, char **argv)
         printf("m = Anzahl der Kanten die hinzugefügt werden\n");
         exit(1);
     }
-
     num_nodes = atoi(argv[argz++]);
     m = atoi(argv[argz++]);               /* read number of nodes */
-    //  sscanf(argv[argz++], "%lf", &c2);     /* read inter-group connectivity */
 
-    //testMain(num_nodes,m);
+    //run experiments for fixed graph size and defined parameter
     runExperiments(10000,num_nodes,m);
     return(0);
 
