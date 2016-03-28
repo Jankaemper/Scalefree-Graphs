@@ -19,6 +19,7 @@
 /*********************************************************/
 gs_graph_t *gs_create_planar_graph(int num_nodes, double f, double alpha)
 {
+    srand48(time(NULL));
     gs_graph_t *g;
     int n,i,j;
 
@@ -27,24 +28,24 @@ gs_graph_t *gs_create_planar_graph(int num_nodes, double f, double alpha)
 
     g->num_nodes = num_nodes;                     	/* initialise nodes */
     for(n=0; n<num_nodes; n++)
-	{
-		g->node[n].neighbors = NULL;
-		g->node[n].x_Coord = drand48();
-		g->node[n].y_Coord = drand48();
-	}
+    {
+        g->node[n].neighbors = NULL;
+        g->node[n].x_Coord = drand48();
+        g->node[n].y_Coord = drand48();
+    }
 
-	double d_ij;
+    double d_ij;
     for(i=0; i<num_nodes; i++)						/* init edges with defined probability */
-	{
-		for(j=i+1; j<num_nodes; j++)
-		{
-			d_ij=sqrt(pow((g->node[i].x_Coord - g->node[j].x_Coord),2)+pow((g->node[i].y_Coord - g->node[j].y_Coord),2));
-			if (drand48() < f*pow(1/(1+sqrt(num_nodes*M_PI)*d_ij/alpha),alpha))
-			{
-				gs_insert_edge(g, i, j);
-			}
-		}
-	}
+    {
+        for(j=i+1; j<num_nodes; j++)
+        {
+            d_ij=sqrt(pow((g->node[i].x_Coord - g->node[j].x_Coord),2)+pow((g->node[i].y_Coord - g->node[j].y_Coord),2));
+            if (drand48() < f*pow(1/(1+sqrt(num_nodes*M_PI)*d_ij/alpha),alpha))
+            {
+                gs_insert_edge(g, i, j);
+            }
+        }
+    }
 
     return(g);
 }
@@ -68,7 +69,7 @@ gs_graph_t *gs_create_graph(int num_nodes)
 
     g->num_nodes = num_nodes;                     /* initialise */
     for(n=0; n<num_nodes; n++)
-	g->node[n].neighbors = NULL;
+        g->node[n].neighbors = NULL;
 
     return(g);
 }
@@ -89,14 +90,14 @@ void gs_insert_edge(gs_graph_t *g, int from, int to)
     elem_t *elem1, *elem2;
 
     if(search_info(g->node[from].neighbors, to) != NULL)  /* edge exists? */
-	return;
+        return;
 
     elem1 = create_element(to);              /* create neighbor for 'from' */
     g->node[from].neighbors =
-	insert_element(g->node[from].neighbors, elem1, NULL);
+        insert_element(g->node[from].neighbors, elem1, NULL);
     elem2 = create_element(from);              /* create neighbor for 'to' */
     g->node[to].neighbors =
-	insert_element(g->node[to].neighbors, elem2, NULL);
+        insert_element(g->node[to].neighbors, elem2, NULL);
 }
 
 
@@ -112,9 +113,9 @@ void gs_insert_edge(gs_graph_t *g, int from, int to)
 int gs_edge_exists(gs_graph_t *g, int from, int to)
 {
     if(search_info(g->node[from].neighbors, to) != NULL)  /* edge exists? */
-      return(1);
+        return(1);
     else
-      return(0);
+        return(0);
 }
 
 /******************* gs_preferential_attachment() ********/
@@ -133,49 +134,49 @@ int gs_edge_exists(gs_graph_t *g, int from, int to)
 /*********************************************************/
 void gs_preferential_attachment(gs_graph_t *g, int m)
 {
-  int t;
-  int n1, n2;
-  int *pick;            /* array which holds for each edge {n1,n2} */
-                        /* the numbers n1 and n2. Used for picking */
-                       /* nodes proportional to its current degree */
-  int num_pick;              /* number of entries in 'pick' so far */
-  int max_pick;                       /* maximum number of entries */
+    int t;
+    int n1, n2;
+    int *pick;            /* array which holds for each edge {n1,n2} */
+    /* the numbers n1 and n2. Used for picking */
+    /* nodes proportional to its current degree */
+    int num_pick;              /* number of entries in 'pick' so far */
+    int max_pick;                       /* maximum number of entries */
 
-  if(g->num_nodes < m+1)
-  {
-      printf("graph too small to have at least %d edges per node!\n", m);
-      exit(1);
-  }
-  max_pick = 2*m*g->num_nodes- m*(m+1);
-  pick = (int *) malloc(max_pick*sizeof(int));
-  num_pick=0;
-  for(n1=0; n1<m+1; n1++) /* start: complete subgraph of m+1 nodes */
-
-    for(n2=n1+1; n2<m+1; n2++)
+    if(g->num_nodes < m+1)
     {
-      gs_insert_edge(g, n1, n2);
-      pick[num_pick++] = n1;
-      pick[num_pick++] = n2;
+        printf("graph too small to have at least %d edges per node!\n", m);
+        exit(1);
     }
+    max_pick = 2*m*g->num_nodes- m*(m+1);
+    pick = (int *) malloc(max_pick*sizeof(int));
+    num_pick=0;
+    for(n1=0; n1<m+1; n1++) /* start: complete subgraph of m+1 nodes */
 
-  for(n1=m+1; n1<g->num_nodes; n1++)            /* add other nodes */
-  {
-    t=0;
-    while(t<m)                                   /* insert m edges */
+        for(n2=n1+1; n2<m+1; n2++)
+        {
+            gs_insert_edge(g, n1, n2);
+            pick[num_pick++] = n1;
+            pick[num_pick++] = n2;
+        }
+
+    for(n1=m+1; n1<g->num_nodes; n1++)            /* add other nodes */
     {
-      do
-        n2 = (int) pick[(int) floor(drand48()*num_pick)];
-      while(n2==n1);              /* chose pair of different nodes */
-      if(!gs_edge_exists(g, n1, n2))
-      {
-	gs_insert_edge(g, n1, n2);
-	pick[num_pick++] = n1;
-	pick[num_pick++] = n2;
-	t++;
-      }
+        t=0;
+        while(t<m)                                   /* insert m edges */
+        {
+            do
+                n2 = (int) pick[(int) floor(drand48()*num_pick)];
+            while(n2==n1);              /* chose pair of different nodes */
+            if(!gs_edge_exists(g, n1, n2))
+            {
+                gs_insert_edge(g, n1, n2);
+                pick[num_pick++] = n1;
+                pick[num_pick++] = n2;
+                t++;
+            }
+        }
     }
-  }
-  free(pick);
+    free(pick);
 }
 
 /******************* graph_ausgabe() *********************/
@@ -190,21 +191,21 @@ void gs_preferential_attachment(gs_graph_t *g, int m)
 /**     (nothing)                                       **/
 /*********************************************************/
 void graph_ausgabe(gs_graph_t *g, int num_nodes) {
-  FILE *file;
-  int i;
-  file = fopen("graph_visu.dot", "w");
-  fprintf(file, "graph scale_free_graph {\n");
+    FILE *file;
+    int i;
+    file = fopen("graph_visu.dot", "w");
+    fprintf(file, "graph scale_free_graph {\n");
 
-  for(i=0; i<num_nodes; i++)
-  {
-    elem_t *next_neighb;
-    next_neighb = g->node[i].neighbors;
-    while(next_neighb != NULL) {
-      fprintf(file,"%d -- %d\n", i, next_neighb->info);
-      next_neighb = next_neighb->next;
+    for(i=0; i<num_nodes; i++)
+    {
+        elem_t *next_neighb;
+        next_neighb = g->node[i].neighbors;
+        while(next_neighb != NULL) {
+            fprintf(file,"%d -- %d\n", i, next_neighb->info);
+            next_neighb = next_neighb->next;
+        }
     }
-  }
-  fprintf(file, "}");
+    fprintf(file, "}");
 }
 
 /******************* exportGraphDot() *********************/
@@ -230,7 +231,8 @@ void exportGraphDot(gs_graph_t *g,int n, int m)
     {
         elem_t *next_neighb;
         next_neighb = g->node[i].neighbors;
-        while(next_neighb != NULL) {
+        while(next_neighb != NULL) 
+        {
             fprintf(file,"%d -- %d\n", i, next_neighb->info);
             next_neighb = next_neighb->next;
         }
@@ -269,20 +271,22 @@ void printDistances(double **dist, int n,char destination[])
 /**                destination[]: Filename               **/
 /*********************************************/
 void printedges(gs_graph_t *g, int num_nodes, char destination[]) {
-  FILE *file;
-  int i;
+    FILE *file;
+    int i;
     file = fopen(destination, "w");
 
-  for(i=0; i<num_nodes; i++)
-  {
-    elem_t *next_neighb;
-    next_neighb = g->node[i].neighbors;
-    while(next_neighb != NULL) {
-      fprintf(file,"%f ", sqrt(pow(g->node[i].x_Coord - g->node[next_neighb->info].x_Coord,2)+pow(g->node[i].y_Coord - g->node[next_neighb->info].y_Coord,2)));
-      next_neighb = next_neighb->next;
-    }
+    for(i=0; i<num_nodes; i++)
+    {
+        fprintf(file, "%f/%f: ",g->node[i].x_Coord,g->node[i].y_Coord);
+        elem_t *next_neighb;
+        next_neighb = g->node[i].neighbors;
+        while(next_neighb != NULL) 
+        {
+            fprintf(file,"%d: %f ", next_neighb->info, sqrt(pow(g->node[i].x_Coord - g->node[next_neighb->info].x_Coord,2)+pow(g->node[i].y_Coord - g->node[next_neighb->info].y_Coord,2)));
+            next_neighb = next_neighb->next;
+        }
         fprintf(file, "\n");
-  }
+    }
 }
 
 /**************printHistogram() **************/
@@ -323,9 +327,24 @@ void printHistogramNormed(double *histogram, int n, char destination[], int numB
     FILE *file;
     file = fopen(destination, "w");
 
+    //counter number of histogram entries for the normation
+    int numEntries = 0;
     for(i=startIndex; i<numBins; i++)
     {
-        fprintf(file,"%d %.10f\n", i, histogram[i]/(n*(n-1)/2));
+        numEntries += histogram[i];
+    }
+    //for each entry print out the number of occurences in  bin divided by total number of entries
+    for(i=startIndex; i<numBins; i++)
+    {
+        //if histogram labels start at 0, then add offset of 1 in order to avoid fitting problems (division by zero)
+        if (startIndex == 0)
+        {
+            fprintf(file,"%d %.10f\n", i+1, histogram[i]/numEntries);
+        }
+        else 
+        {
+            fprintf(file,"%d %.10f\n", i, histogram[i]/numEntries);
+        }
     }
 }
 
@@ -335,7 +354,7 @@ void printHistogramNormed(double *histogram, int n, char destination[], int numB
 /**                g: given graph              					       		**/
 /**                weighted: flag signaling if edges are weighted or not    **/
 /*********************************************/
-void computeShortestPaths(gs_graph_t *g,double **dist,int weighted)
+void gs_all_pair_shortest_paths(gs_graph_t *g,double **dist,int weighted)
 {
     int i,j,k =0;
     //set diagonal (loops have dist 0)
@@ -349,7 +368,7 @@ void computeShortestPaths(gs_graph_t *g,double **dist,int weighted)
             }
             else
             {
-                //TODO: inifintiy
+                //inifintiy
                 dist[i][j] = 100000 ;
             }
         }
@@ -361,16 +380,16 @@ void computeShortestPaths(gs_graph_t *g,double **dist,int weighted)
         next_neighb = g->node[i].neighbors;
         while(next_neighb != NULL)
         {
-			//if weighted is false, then all edges should have weight 1
-			if (weighted==0)
-			{
-				dist[i][next_neighb->info] = 1.0;
-			}
-			//if weighted is true, then all edges should have their euclidean distance as length
-			else
-			{
-				dist[i][next_neighb->info] = sqrt(pow(g->node[i].x_Coord - g->node[next_neighb->info].x_Coord,2)+pow(g->node[i].y_Coord - g->node[next_neighb->info].y_Coord,2));
-			}
+            //if weighted is false, then all edges should have weight 1
+            if (weighted==0)
+            {
+                dist[i][next_neighb->info] = 1.0;
+            }
+            //if weighted is true, then all edges should have their euclidean distance as length
+            else
+            {
+                dist[i][next_neighb->info] = sqrt(pow(g->node[i].x_Coord - g->node[next_neighb->info].x_Coord,2)+pow(g->node[i].y_Coord - g->node[next_neighb->info].y_Coord,2));
+            }
             next_neighb = next_neighb->next;
         }
     }
@@ -400,7 +419,7 @@ void computeShortestPaths(gs_graph_t *g,double **dist,int weighted)
 /*********************************************/
 void fillHistogramDiscrete(double **dist, double **histogram, int n)
 {
-	int i,j;
+    int i,j;
     for (i=0;i<n;i++)
     {
         for (j=i+1;j<n;j++)
@@ -423,40 +442,46 @@ void fillHistogramDiscrete(double **dist, double **histogram, int n)
 /*********************************************/
 void fillHistogramContinuous(double **dist, double **histogram,int n, int numBins)
 {
-	int i,j;
+    int i,j;
 
-	double minDist = n*sqrt(2)+1;
-	double maxDist = 0;
-	//find overall max and min distances
+    double minDist = n*sqrt(2)+1;
+    double maxDist = 0;
+    //find overall max and min distances
     for (i=0;i<n;i++)
     {
         for (j=i+1;j<n;j++)
         {
             if (dist[i][j] < minDist)
-			{
-				minDist = dist[i][j];
-			}
-  			if (dist[i][j] > maxDist && dist[i][j] != 100000)
-			{
-				maxDist = dist[i][j];
-			}
+            {
+                minDist = dist[i][j];
+            }
+            if (dist[i][j] > maxDist && dist[i][j] != 100000)
+            {
+                maxDist = dist[i][j];
+            }
         }
     }
-	
-	//calc bin width
-	maxDist = maxDist + 0.000001;
-	double binWidth = (maxDist - minDist) / numBins;
 
-	//assign all pair-wise distances from matrix to histogram
+    //calc bin width
+    double binWidth = (maxDist - minDist) / numBins;
+
+    //assign all pair-wise distances from matrix to histogram
     for (i=0;i<n;i++)
     {
         for (j=i+1;j<n;j++)
         {
- 			if (dist[i][j] != 100000)
-			{
-            	(*histogram)[(int)(floor((dist[i][j] - minDist) / binWidth))]++;
-        	}
-		}
+            if (dist[i][j] != 100000)
+            {
+                if (dist[i][j] == maxDist)
+                {
+                    (*histogram)[numBins-1]++;
+                }
+                else
+                {
+                    (*histogram)[(int)(floor((dist[i][j] - minDist) / binWidth))]++;
+                }
+            }
+        }
     }
 }
 
@@ -469,20 +494,20 @@ void fillHistogramContinuous(double **dist, double **histogram,int n, int numBin
 /*********************************************/
 double computeMeanShortestPath(double **dist, int n)
 {
-	double sum;
-	int i,j, countExisting =0;
+    double sum=0;
+    int i,j, countExisting =0;
     for (i=0;i<n;i++)
     {
         for (j=i+1;j<n;j++)
         {
-			if (dist[i][j] != 100000)
-			{
-				countExisting ++;
-            	sum += dist[i][j];
-			}        
-		}
+            if (dist[i][j] != 100000)
+            {
+                countExisting ++;
+                sum += dist[i][j];
+            }        
+        }
     }
-	return sum/countExisting;
+    return sum/countExisting;
 }
 
 /**************runExperimentsPlanar() **************/
@@ -498,7 +523,7 @@ void runExperiments(int runs, int n, int m)
     int i,j,k;
     gs_graph_t *g;
 
-   
+
     //init dist array
     double **dist;
     dist = (double**)malloc(sizeof(double*)*n);
@@ -508,33 +533,27 @@ void runExperiments(int runs, int n, int m)
     }
 
     //perform runs
-	double *histogram;
+    double *histogram;
     histogram = (double*)malloc(sizeof(double)*n);
     for (k=0;k<runs;k++)
     {
-		//init scale free graph of size n
-	    g = gs_create_graph(n);
-	    gs_preferential_attachment(g, m);
+        //init scale free graph of size n
+        g = gs_create_graph(n);
+        gs_preferential_attachment(g, m);
 
-		//compute all shortest paths with floyd warshall and 
-	    computeShortestPaths(g,dist,0);
+        //compute all shortest paths with floyd warshall and 
+        gs_all_pair_shortest_paths(g,dist,0);
 
-		//create histogram from distance matrix
-		fillHistogramDiscrete(dist,&histogram,n);
+        //create histogram from distance matrix
+        fillHistogramDiscrete(dist,&histogram,n);
     }
 
-	//average histogram of shortest path lengths over number of runs
-    for (i=0;i<n;i++)
-    {
-        histogram[i] = histogram[i]/runs;
-    }
-
-	//output in file
-	char filename[1000];
+    //output in file
+    char filename[1000];
     sprintf(filename, "OutputScaleFree_Normed/histogram_N%d_M%d.dat", n, m);
     printHistogramNormed(histogram, n, filename, n, 1);
 
-	free(histogram);
+    free(histogram);
 }
 
 /**************runExperimentsPlanar() **************/
@@ -557,38 +576,31 @@ void runExperimentsPlanar(int runs, int n)
         dist[i] = (double*)malloc(sizeof(double)*n);
     }
 
-    //perform runs
-	double *histogram;
 
-	//reasonable number of bins for histogram according to literature
-	int numBins = sqrt(n);
-    histogram = (double*)malloc(sizeof(double)*numBins);
+    //reasonable number of bins for histogram according to literature
+    int numBins = sqrt(n);
+    double *histogram = (double*)malloc(sizeof(double)*numBins);
     for (k=0;k<runs;k++)
     {
-		//init planar graph evenly distributed in square [0,1]² of size n
-	    g = gs_create_planar_graph(n,1,3);
+        //init planar graph evenly distributed in square [0,1]² of size n
+        g = gs_create_planar_graph(n,1,3);
 
-		//compute all shortest paths with floyd warshall and 
-	    computeShortestPaths(g,dist,1);
+        //compute all shortest paths with floyd warshall
+        gs_all_pair_shortest_paths(g,dist,1);
 
-		//create histogram from distance matrix
-		fillHistogramContinuous(dist,&histogram,n,numBins);
+        //create histogram from distance matrix
+        fillHistogramContinuous(dist,&histogram,n,numBins);
     }
-	//printDistances(dist,  n, 0, "OutputPlanar_Normed/dists.dat"); 
-    //printedges(g, n,  "OutputPlanar_Normed/edges.dat");
-	
-	//average histogram of shortest path lengths over number of runs
-    for (i=0;i<numBins;i++)
-    {
-        histogram[i] = histogram[i]/runs;
-    }
+    printDistances(dist,  n, "OutputPlanar_Normed/dists.dat"); 
+    printedges(g, n,  "OutputPlanar_Normed/edges.dat");
 
-	//output in file
-	char filename[1000];
+
+    //output in file
+    char filename[1000];
     sprintf(filename, "OutputPlanar_Normed/histogram_N%d.dat", n);
     printHistogramNormed(histogram, n, filename, numBins, 0);
 
-	free(histogram);
+    free(histogram);
 }
 
 
@@ -603,35 +615,36 @@ void runMeanExperimentsPlanar(int runs, int stepSize)
 {
     int i,j,k,n;
     gs_graph_t *g;
-	FILE *file;
+    FILE *file;
     file = fopen("OutputPlanar_Normed/meanValues.dat", "w");
-	//write mean distance for different graph sizes into file
-	for (n = 10; n <= 500; n=n+stepSize)
-	{
-		//init all arrays to 0
-		double **dist;
-		dist = (double**)malloc(sizeof(double*)*n);
-		for (i=0;i<n;i++)
-		{
-		    dist[i] = (double*)malloc(sizeof(double)*n);
-		}
+    //write mean distance for different graph sizes into file
+    for (n = 10; n <= 1000; n=n+stepSize)
+    {
+        //perform runs
+        double meanShortestPath= 0;
+        for (k=0;k<runs;k++)
+        {
+            //init planar graph evenly distributed in square [0,1]² of size n
+            g = gs_create_planar_graph(n,1,3);
 
-		//perform runs
-		double meanShortestPath;
-		for (k=0;k<runs;k++)
-		{
-			//init planar graph evenly distributed in square [0,1]² of size n
-			g = gs_create_planar_graph(n,1,3);
+            //init array to 0
+            double **dist = (double**)malloc(sizeof(double*)*n);
+            for (i=0;i<n;i++)
+            {
+                dist[i] = (double*)malloc(sizeof(double)*n);
+            }
 
-			//compute all shortest paths with floyd warshall and write result in dist matrix
-			computeShortestPaths(g,dist,1);
+            //compute all shortest paths with floyd warshall and write result in dist matrix
+            gs_all_pair_shortest_paths(g,dist,1);
 
-			//calc mean over all distances
-			meanShortestPath += computeMeanShortestPath(dist,n);
-		}
-	
-		meanShortestPath = meanShortestPath/runs;
+            //calc mean over all distances
+            meanShortestPath += computeMeanShortestPath(dist,n);
+        }
 
-		fprintf(file,"%d %f\n", n, meanShortestPath);
-	}
+        meanShortestPath = meanShortestPath/runs;
+
+        fprintf(file,"%d %f\n", n, meanShortestPath);
+        printf("%d %f\n", n, meanShortestPath);
+    }
 }
+

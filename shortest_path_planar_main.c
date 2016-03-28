@@ -19,7 +19,7 @@ int main(int argc, char **argv)
     int num_real, i;                               
     int argz = 1;                   
 
-	//read command line arguments
+    //read command line arguments
     if(argc != 2)
     {
         printf("USAGE %s <N> <m> \n", argv[0]);
@@ -28,10 +28,10 @@ int main(int argc, char **argv)
     }
     num_nodes = atoi(argv[argz++]);
 
-	//run experiments in order to get distributions of shortest path in histograms for defined graph size
-    runExperimentsPlanar(100,num_nodes);
-	//run experiments in order to get mean of shortest path for different graph sizes
-	runMeanExperimentsPlanar(10,1);
+    //run experiments in order to get distributions of shortest path in histograms for defined graph size
+    //runExperimentsPlanar(100,num_nodes);
+    //run experiments in order to get mean of shortest path for different graph sizes
+    runMeanExperimentsPlanar(1000,10);
     return(0);
 
 }
