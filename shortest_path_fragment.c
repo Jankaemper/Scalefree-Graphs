@@ -617,22 +617,22 @@ void runMeanExperimentsPlanar(int runs, int stepSize)
     gs_graph_t *g;
     FILE *file;
     file = fopen("OutputPlanar_Normed/meanValues.dat", "w");
+
     //write mean distance for different graph sizes into file
     for (n = 10; n <= 1000; n=n+stepSize)
     {
+        //init array to 0
+        double **dist = (double**)malloc(sizeof(double*)*n);
+        for (i=0;i<n;i++)
+        {
+            dist[i] = (double*)malloc(sizeof(double)*n);
+        }
         //perform runs
         double meanShortestPath= 0;
         for (k=0;k<runs;k++)
         {
             //init planar graph evenly distributed in square [0,1]² of size n
             g = gs_create_planar_graph(n,1,3);
-
-            //init array to 0
-            double **dist = (double**)malloc(sizeof(double*)*n);
-            for (i=0;i<n;i++)
-            {
-                dist[i] = (double*)malloc(sizeof(double)*n);
-            }
 
             //compute all shortest paths with floyd warshall and write result in dist matrix
             gs_all_pair_shortest_paths(g,dist,1);

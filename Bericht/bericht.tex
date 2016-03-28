@@ -7,7 +7,10 @@
 \usepackage[english]{babel}
 \usepackage{geometry}
 \usepackage{subcaption}
+\usepackage[utf8]{inputenc}
 
+\renewcommand{\figurename}{Abb.}
+\renewcommand{\contentsname}{Inhaltsverzeichnis}
 
 \begin{document}
 \lstset{
@@ -23,33 +26,33 @@
 \newpage
 \section{Problemstellung}
  
-Ziel dieses Projektes war es statistische Beobachtungen über die Verteilung von kürzesten Wegen in skalenfreien Graphen zu machen. In skalenfreien Graphen sind die Kanten pro Knoten nach einem Potenzgesetz verteilt. 
-\begin{align*}
-P(k) \tilde{*} k^{-\alpha}
-\end{align*}
-Die Erstellung von skalenfreien Graphen erfolgt anhand von speziellen Algorithmen. Der hier verwendete Algorithmus folgt dem Barabasi-Albert Model und nutzt die Methode Preferential Attachment. Dabei ist der Parameter $m$ maßgeblich, der die Anzahl an Nachbahrn eines neu hinzugefügten Knotens beschreibt. 
+Ziel dieses Projektes war es statistische Beobachtungen über die Verteilung von kürzesten Pfaden in skalenfreien Graphen zu machen. In skalenfreien Graphen sind die Kanten pro Knoten nach einem Potenzgesetz verteilt: 
+\begin{equation*}
+P(k) \sim k^{-\alpha}
+\end{equation*}
+Die Erstellung von skalenfreien Graphen erfolgt anhand von speziellen Algorithmen. Der hier verwendete Algorithmus folgt dem Barabasi-Albert Model und nutzt die Methode Preferential Attachment. Dabei ist der Parameter $m$ maßgeblich, der die Anzahl an Nachbarn eines neu hinzugefügten Knotens beschreibt. \\
 
-Die Größe des Graphens wird über die Anzahl der Knoten n definiert. Um eine Aussage über die statistische Verteilung der kürzesten Wege in unterschiedlichen Graphfamilien treffen zu können, müssen mehrere Simulationsläufe in Abhängigkeit der Parameter n und m durchgeführt werden, über die dann gemittelt wird.
+Die Größe des Graphens wird über die Anzahl der Knoten $n$ definiert. Um eine Aussage über die statistische Verteilung der kürzesten Pfade in unterschiedlichen Graphfamilien treffen zu können, müssen mehrere Simulationsläufe in Abhängigkeit der Parameter $n$ und $m$ durchgeführt werden, über die dann gemittelt wird.
 Zur Berechnung der kürzesten Wege wurde auf den Floyd-Warshall Algorithmus zurückgegriffen, der in kubischer Laufzeit kürzeste Wege für alle Knotenpaare in dem ungerichteten Ausgangsgraphen liefert.
-Experimente mit unterschiedlichen parametrisierten Graphen wurden dann durch ein Fitting an Normalverteilung und Potenzgesetze in Gnuplot ausgewertet.
+Experimente mit unterschiedlichen parametrisierten Graphen wurden dann durch ein Fitting an Normalverteilung und Potenzgesetze in Gnuplot ausgewertet.\\
 
-In den Extraaufgaben wurde zum einen ein allgemeines preferential attachment umgesetzt, das zu einer veränderten Gradverteilung pro Knoten führt. Zum anderen wurde eine weitere Familie von Graphen betrachtet. Hierbei handelt es sich um ebene Zufallsgraphen in der $[0,1]^2$ Ebene, wobei Kanten zwischen zweien der gleichmäßig in der Ebene verteilten Knoten mit einer Wahrscheinlichkeit hinzugefügt werden, die kubisch in der euklidischen Distanz der Knoten abnimmt. Hier wurde analog zu den skalenfreien Graphen die Verteilung der kürzesten Wege Längen untersucht, zuästzlich aber auch die mittlere Länge der kürzesten Wege in Abhängigkeit von der Größe des Graphen.
+In den Extraaufgaben wurde zum einen ein allgemeines preferential attachment umgesetzt, das zu einer veränderten Gradverteilung pro Knoten führt. Zum anderen wurde eine weitere Familie von Graphen betrachtet. Hierbei handelt es sich um ebene Zufallsgraphen in der $[0,1]^2$ Ebene, wobei Kanten zwischen zweien der gleichmäßig in der Ebene verteilten Knoten mit einer Wahrscheinlichkeit hinzugefügt werden, die kubisch in der euklidischen Distanz der Knoten abnimmt. Hier wurde analog zu den skalenfreien Graphen die Verteilung der kürzesten Wege Längen untersucht, zusätzlich aber auch die mittlere Länge der kürzesten Wege in Abhängigkeit von der Größe des Graphen.
 
 \section{Programmentwurf}
 
 Die wichtigsten Bestandteile des Programms werden hier kurz erläutert. Auf vollständige Methodensignaturen wird dabei verzichtet. Alle Metoden mit Ausnahme der Main-Funktionen sind in der Datei \textit{shortest\_path\_fragment.c} zu finden.
 
-\paragraph{Generierung der Graohen}
-Um die Problemstellung wie gefordert bearbeiten zu können, werden zunächst Methoden benötigt, die Graphen den gewünschten Typs (skalenfreier Graph oder ebener gleichverteilter Graph) erzeugen. Die dafür benötigten Datenstrukturen für ungerichtete Graphen wurden aus der Vorlesung übernommen (Dateien \textit{graph\_lists.h, lists.h, lists.c}). Für die Extraaufgabe wurde lediglich die Datenstruktur für Knoten um die x- und y-Koordinate ergänzt. Weitere wesentliche Graphoperationen (\textit{gs\_insert\_edge, gs\_create\_graph, gs\_edge\_exists, gs\_preferential\_attachment}) konnten in der Datei \textit{shortest\_path\_fragment.c} ebenfalls übernommen werden. Für die Erzeugung der ebenen Zufallsgraphen wurde die Methode \textit{gs\_create\_planar\_graph} geschrieben, welche $n$ zufällig verteilte Knoten und Kanten entsprechend der Wahrscheinlichkeit $p_{ij} = f \cdot (1 + \frac{\sqrt{N \Pi} \cdot d_{ij}}{\alpha})^{-\alpha}$ erzeugt.
+\paragraph{Generierung der Graphen}
+Um die Problemstellung wie gefordert bearbeiten zu können, werden zunächst Methoden benötigt, die Graphen des gewünschten Typs (skalenfreier Graph oder ebener gleichverteilter Graph) erzeugen. Die dafür benötigten Datenstrukturen für ungerichtete Graphen wurden aus der Vorlesung übernommen (Dateien \textit{graph\_lists.h, lists.h, lists.c}). Für die Zusatzaufgabe wurde lediglich die Datenstruktur für Knoten um die x- und y-Koordinate ergänzt. Weitere wesentliche Graphoperationen (\textit{gs\_insert\_edge, gs\_create\_graph, gs\_edge\_exists, gs\_preferential\_attachment}) konnten in der Datei \textit{shortest\_path\_fragment.c} ebenfalls übernommen werden. Für die Erzeugung der ebenen Zufallsgraphen wurde die Methode \textit{gs\_create\_planar\_graph} geschrieben, welche $n$ zufällig verteilte Knoten und Kanten entsprechend der Wahrscheinlichkeit $p_{ij} = f \cdot (1 + \frac{\sqrt{N \Pi} \cdot d_{ij}}{\alpha})^{-\alpha}$ erzeugt.
 
 \paragraph{Ausgabe}
-Zur Kontrolle der einzelnen Berechnungsschritte und Ausgabe der Simulationsergebnisse wurden mehrere Methoden implementiert, die Graphen, Matrizen oder Histogramme auf der Konsole oder in Dateien ausgeben. Die Methode \textit{exportGraphDot} schreibt eine Ausgabedatei welche von dem Programm \textit{dot} gelesen werden kann und durch das der Graoh visualisiert wird, so konnten in frühen Stadien der Entwicklung bereits einfach Programmfehler erkannt und behoben werden. Zum gleichen Zweck dient \textit{printedges}, die alle Kannten des Graphes in einfacher Form in eine Ausgabedatei schreibt. Um die berechnete Distanzmatrix mit allen kürzesten Wege-Länge im passenden Format auszugeben kann die Methode \textit{printDistances} verwendet werden.
+Zur Kontrolle der einzelnen Berechnungsschritte und Ausgabe der Simulationsergebnisse wurden mehrere Methoden implementiert, die Graphen, Matrizen oder Histogramme auf der Konsole oder in Dateien ausgeben. Die Methode \textit{exportGraphDot} schreibt eine Ausgabedatei, welche von dem Programm \textit{dot} gelesen werden kann und durch die der Graph visualisiert wird.So konnten in frühen Stadien der Entwicklung bereits einfach Programmfehler erkannt und behoben werden. Zum gleichen Zweck dient \textit{printedges}, die alle Kanten des Graphs in einfacher Form in eine Ausgabedatei schreibt. Um die berechnete Distanzmatrix mit allen kürzesten Weglängen im passenden Format auszugeben kann die Methode \textit{printDistances} verwendet werden.
 
-Die Ergebnisse der Simulationsläufe zur weiteren statistischen Analyse werden mit den Methoden \textit{printHistogram} und \textit{printHistogramNormed} in Dateien geschrieben. Die nicht-normierte Variante schreibt die einzelnen Einträge des Histograms zeilenweise in eine Datei. Die normierte Variante führt zusätzlich eine Normierung des Gesamtgewicht des Histograms auf $1$ durch. Der Parameter \textit{startindex} kann verwendet werden um zum Beispiel die Histogram-Einträge mit Distanz 0 auszublenden.
+Die Ergebnisse der Simulationsläufe zur weiteren statistischen Analyse werden mit den Methoden \textit{printHistogram} und \textit{printHistogramNormed} in Dateien geschrieben. Die nicht-normierte Variante schreibt die einzelnen Einträge des Histograms zeilenweise in eine Datei. Die normierte Variante führt zusätzlich eine Normierung des Gesamtgewichts des Histograms auf $1$ durch. Der Parameter \textit{startindex} kann verwendet werdeno, um zum Beispiel die Histogram-Einträge mit Distanz 0 auszublenden.
 
 \paragraph{Berechnung der kürzesten Wege}
-Als Schritt nach der Graph-Erzeugung müssen für den angelegten Graph die kürzesten Wege berechnet werden. D.h. für den gegebenen Graphen muss für jede Kombination von zwei Knoten der entsprechende Abstand bestimmt werden. Das Ergebnis ist eine quadratisch symmetrische Matrix, die in jeder Zelle des oberen Dreiecks den Abstand des Knotenpaars (Spalte und Zeile) enthält. 
-Um überhaupt eine Aussage über die Distanz treffen zu können, muss den Kanten zunächst eine Wertigkeit bzw. Länge zugeschrieben werden. Im Falle der skalenfreien Graphen wurde überall der Abstand $d_{ij}=1$ angenomme, sodass die Länge eines Weges der Anzahl an Kanten auf dem Weg entspricht. Im Falle der ebenen Graphen wurde die euklidische Distanz betrachtet. Für die Berechnung der kürzesten Wege sollte laut Aufgabenstellung der Floyd-Warshall Algorithmus implementiert werden. Dieser ist in der Methode 'gs\_all\_pair\_shortest\_paths' implementiert. Zunächst wird darin die Initialisierung der Distanzmatrix vorgenommen. Diese kann gewichtet (euklidisch) oder ungewichtet sein (skalenfreier Graph). Danach folgt die dreifach verschachtelte Schleife von Floyd-Wahrshall, welche die als Parameter vorhandene Distanzmatrix ausfüllt.
+Als Schritt nach der Graph-Erzeugung müssen für den angelegten Graph die kürzesten Wege berechnet werden. D.h. für den gegebenen Graphen muss für jede Kombination von zwei Knoten der jeweilige Abstand bestimmt werden. Das Ergebnis ist eine quadratisch symmetrische Matrix, die in jeder Zelle des oberen Dreiecks den Abstand des Knotenpaars (Spalte und Zeile) enthält. 
+Um überhaupt eine Aussage über die Distanz treffen zu können, muss den Kanten zunächst eine Wertigkeit bzw. Länge zugeschrieben werden. Im Falle der skalenfreien Graphen wurde überall der Abstand $d_{ij}=1$ angenommen, sodass die Länge eines Weges der Anzahl an Kanten auf dem Weg entspricht. Im Falle der ebenen Graphen wurde die euklidische Distanz betrachtet. Für die Berechnung der kürzesten Wege sollte laut Aufgabenstellung der Floyd-Warshall Algorithmus implementiert werden. Dieser ist in der Methode \textit{gs\_all\_pair\_shortest\_paths} implementiert. Zunächst wird darin die Initialisierung der Distanzmatrix vorgenommen. Diese kann gewichtet (euklidisch) oder ungewichtet sein (skalenfreier Graph). Danach folgt die dreifach verschachtelte Schleife von Floyd-Wahrshall, welche die als Parameter vorhandene Distanzmatrix ausfüllt.
 
 \paragraph{Aufbereitung der Simulationsdaten in Histogrammen}
 Wie bereits im vorherigen Kapitel beschrieben, müssen mehrere Durchläufe mit immer neu generierten Graphen durchgeführt werden, um eine statistische Aussage über die Verteilung der kürzesten Wege treffen zu können. Für das Programm bedeutet das, dass jeder Durchlauf und die dabei berechneten kürzesten Wege gespeichert und in ein Histogram sortiert werden müssen. Für die Sortierung wird gezählt wie häufig eine berechnete Strecke innerhalb des Graphen vorkommt. Bei den skalenfreien Graphen sind alle Distanzen diskrete Werte (Kantengewichte 1) und damit jede Ganzzahl ein Histogram-Bin. Bei den ebenen Zufallsgraphen können beliebige Längen vorkommen. Somit wird die Anzahl an Bins mit der aus der Literatur bekannten Vorschrift $numBins=\sqrt{n}$ angenommen und die kürzesten Wege dementsprechend in Bins sortiert.
@@ -61,7 +64,7 @@ Im letzten Teil der Zusatzaufgabe soll anstelle der Verteilung aller kürzesten 
 Die Steuerung der Simulationsläufe erfolgt in den Methoden \textit{runExperiments} (skalenfreie Graphen), \textit{runExperimentsPlanar} (ebene Zufallsgraphen) und \textit{runMeanExperimentsPlanar} (mittlere Weglänge). Der Ablauf ist in allen Fällen gleich: Eine Schleife führt eine festgelegte Anzahl an Simulationsläufen durch. In jedem Lauf wird zunächst einer neuer Graph erzeugt und dann die kürzesten Wege berechnet, und die Ergebnisse zwischengespeichert. Im Falle der Verteilungsuntersuchung wird zur Zwischenspeicherung der Histogram Array verwendet und über die Simulationsläufe hinweg hochgezählt. Im Falle der Mittelwertuntersuchung wird eine Double-Variable genutzt. Ausserdem gibt es hier noch eine äußere Schleife die über unterschiedliche Graph-Größen iteriert. Nachdem alle Simulationsläufe beendet sind erfolgt die Ausgabe der Ergebnisse in Dateiform.
 
 \paragraph{Automatisierung}
-Um die unterschiedlich parametrisierten Simulationen schnell neu anzustoßen (unterschiedliche Werte für die Parameter $n$ und $m$) existiert die Skripte \textit{simulationScalefree.scr} und \textit{simulationPlanar.scr}. Diese rufen das kompilierte Programm mit der entsprechenden Main und allen benötigten Kommandozeilenparametern auf ($n$, ggf $m$ und Dateinamen für die Ergebnisse).
+Um die unterschiedlich parametrisierten Simulationen schnell neu anzustoßen (unterschiedliche Werte für die Parameter $n$ und $m$) existieren die Skripte \textit{simulationScalefree.scr} und \textit{simulationPlanar.scr}. Diese rufen das kompilierte Programm mit der entsprechenden Main und allen benötigten Kommandozeilenparametern auf ($n$, ggf $m$ und Dateinamen für die Ergebnisse).
 
 \paragraph{Auswertung mit Gnuplot}
 Basierend auf denen durch die Skripte erzeugten Dateien mit Endung .dat können Gnuplot Skripte verwendet werden, die die vorliegenden Daten graphisch darstellen und ein Fitting and die gewünschte Verteilung durchführen. Diese Skripte befinden sich im Ordner \textit{Plotscripts} und können in gnuplot mit dem \textit{load} Befehl geladen werden.
@@ -69,23 +72,23 @@ Basierend auf denen durch die Skripte erzeugten Dateien mit Endung .dat können 
 
 \section{Resultate}
 \subsection{Skalenfreie Graphen}
-Für die skalenfreien Graphen wurde folgende Simulationen durchgeführt: \\
+Für die skalenfreien Graphen wurde folgende Simulationen durchgeführt: 
 \begin{itemize}
-\item[Größe n:] 50,100,200,400
-\item[Parameter m:] 1,2
+\item[\quad Größe n:] 50,100,200,400
+\item[\quad Parameter m:] 1,2
 \end{itemize}
 Für $m=1$ haben wir die Ergebnisse in Abbildung \ref{fig:m1} erhalten. Die unterschiedliche Beschriftung der y-Achse ist der Tatsache geschuldet, dass für die Normalverteilung eine Normierung durchgeführt werden musste, was für das Potenzgesetz hier nicht notwendig war. Die Kurven sind aber in allen Abbildungen, die folgen, durch Skalierung identisch.
 
 \begin{figure}[h!]
 \begin{subfigure}{.5\textwidth}
   \centering
-  \includegraphics[width=.7\linewidth]{../Results/Normal_M1_logscale.png}
+  \includegraphics[width=1\linewidth]{../Results/Normal_M1_logscale.png}
   \caption{Fitting an eine Normalverteilung}
   \label{fig:sfig1}
 \end{subfigure}%
 \begin{subfigure}{.5\textwidth}
   \centering
-  \includegraphics[width=.7\linewidth]{../Results/Power_M1_logscale.png}
+  \includegraphics[width=1\linewidth]{../Results/Power_M1_logscale.png}
   \caption{Fitting an Potenzgesetz}
   \label{fig:sfig2}
 \end{subfigure}
@@ -93,18 +96,18 @@ Für $m=1$ haben wir die Ergebnisse in Abbildung \ref{fig:m1} erhalten. Die unte
 \label{fig:m1}
 \end{figure}
 
-Unabhängig von der Anzahl an Knoten scheint der Fit an das Potenzgesetzt hier wesentlich besser zu sein. Dies ist im Falle $m=2$ umgekehrt. Hier lässt sich feststellen, dass für ein Fitting an eine Normalverteilung geringere Abweichungen vorliegen. Die Ergebnisse sehen hier wie folgt aus:
+Unabhängig von der Anzahl an Knoten scheint der Fit an das Potenzgesetzt hier wesentlich besser zu sein. Dies ist im Falle $m=2$ umgekehrt. Hier lässt sich feststellen, dass für ein Fitting an eine Normalverteilung geringere Abweichungen vorliegen. Die Ergebnisse sind in Abbildung \ref{fig:m2} zu sehen.
 
 \begin{figure}[h!]
 \begin{subfigure}{.5\textwidth}
   \centering
-  \includegraphics[width=.7\linewidth]{../Results/Normal_M2_logscale.png}
+  \includegraphics[width=1\linewidth]{../Results/Normal_M2_logscale.png}
   \caption{Fitting an eine Normalverteilung}
   \label{fig:sfig1}
 \end{subfigure}%
 \begin{subfigure}{.5\textwidth}
   \centering
-  \includegraphics[width=.7\linewidth]{../Results/Power_M2_logscale.png}
+  \includegraphics[width=1\linewidth]{../Results/Power_M2_logscale.png}
   \caption{Fitting an Potenzgesetz}
   \label{fig:sfig2}
 \end{subfigure}
@@ -124,13 +127,13 @@ Es zeigt sich, dass auch hier eine Normalverteilung die bessere Approximation li
 \begin{figure}[h!]
 \begin{subfigure}{.5\textwidth}
   \centering
-  \includegraphics[width=.7\linewidth]{../Results/Normal_Planar_logscale.png}
+  \includegraphics[width=\linewidth]{../Results/Normal_Planar_logscale.png}
   \caption{Fitting an eine Normalverteilung}
   \label{fig:sfig1}
 \end{subfigure}%
 \begin{subfigure}{.5\textwidth}
   \centering
-  \includegraphics[width=.7\linewidth]{../Results/Power_Planar_logscale.png}
+  \includegraphics[width=\linewidth]{../Results/Power_Planar_logscale.png}
   \caption{Fitting an Potenzgesetz}
   \label{fig:sfig2}
 \end{subfigure}
