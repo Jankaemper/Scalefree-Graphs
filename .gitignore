@@ -33,4 +33,10 @@
 
 # custom
 shortest_path
+shortest_path_planar
 Output/
+Bericht/*.aux
+Bericht/*.toc
+Bericht/*.log
+Bericht/*.aux
+Plotscripts/fit.log
