@@ -36,6 +36,7 @@ shortest_path
 shortest_path_planar
 Output/
 Bericht/*.aux
+Bericht/*.gz
 Bericht/*.toc
 Bericht/*.log
 Bericht/*.aux

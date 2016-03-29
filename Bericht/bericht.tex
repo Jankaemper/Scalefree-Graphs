@@ -71,7 +71,7 @@ Basierend auf denen durch die Skripte erzeugten Dateien mit Endung .dat können 
 
 
 \section{Resultate}
-\subsection{Skalenfreie Graphen}
+\subsection{Skalenfreie Graphen: Normales preferential attachment}
 Für die skalenfreien Graphen wurde folgende Simulationen durchgeführt: 
 \begin{itemize}
 \item[\quad Größe n:] 50,100,200,400
@@ -98,7 +98,7 @@ Für $m=1$ haben wir die Ergebnisse in Abbildung \ref{fig:m1} erhalten. Die unte
 
 Unabhängig von der Anzahl an Knoten scheint der Fit an das Potenzgesetzt hier wesentlich besser zu sein. Dies ist im Falle $m=2$ umgekehrt. Hier lässt sich feststellen, dass für ein Fitting an eine Normalverteilung geringere Abweichungen vorliegen. Die Ergebnisse sind in Abbildung \ref{fig:m2} zu sehen.
 
-\begin{figure}[h!]
+\begin{figure}[htb!]
 \begin{subfigure}{.5\textwidth}
   \centering
   \includegraphics[width=1\linewidth]{../Results/Normal_M2_logscale.png}
@@ -117,14 +117,17 @@ Unabhängig von der Anzahl an Knoten scheint der Fit an das Potenzgesetzt hier w
 
 Somit lässt sich also schlussfolgern, dass für $m=1$ die Verteilung der kürzesten Wege im Graphen unabhängig von der Größe dem gleichen Gesetz folgt wie es für die Gradverteilung der Knoten gilt, nämlich dem Potenzgesetz. Ändert man den für das preferential attachment massgeblichen Parameter auf $m=2$ so gilt dies nicht mehr, jetzt sind die kürzesten Weglängen im Graph eher normalverteilt. 
 
+\subsection{Skalenfreie Graphen: Allgemeines preferential attachment}
+Flo Master
+
 \subsection{Ebene Zufallsgraphen}
 Für ebene Zufallsgraphen wurden die gleichen Simulationen wie für skalenfreie Graphen durchgeführt. Der Parameter $m$ spielt hier keine Rolle.
 \begin{itemize}
-\item[Größe n:] 50,100,200,400
+\item[\quad Größe n:] 50,100,200,400
 \end{itemize}
 Es zeigt sich, dass auch hier eine Normalverteilung die bessere Approximation liefert (siehe Abbildung \ref{fig:planar}).
 
-\begin{figure}[h!]
+\begin{figure}[htb!]
 \begin{subfigure}{.5\textwidth}
   \centering
   \includegraphics[width=\linewidth]{../Results/Normal_Planar_logscale.png}
@@ -150,5 +153,8 @@ Für ebene Zufallsgraphen wurde zusätzlich untersucht, wie sich die mittlere k�
   \caption{Fitting Power Law}
 \label{fig:planarMean}
 \end{figure}
+
+\section{Fazit}
+Lirum Larum Opsum
 
 \end{document} 
