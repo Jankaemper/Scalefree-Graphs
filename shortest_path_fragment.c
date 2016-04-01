@@ -140,7 +140,7 @@ void gs_preferential_attachment(gs_graph_t *g, int m)
     /* the numbers n1 and n2. Used for picking */
     /* nodes proportional to its current degree */
     int num_pick;              /* number of entries in 'pick' so far */
-    int max_pick;                       /* maximum number of entries */
+    int max_pick;              /* maximum number of entries */
 
     if(g->num_nodes < m+1)
     {
@@ -159,10 +159,10 @@ void gs_preferential_attachment(gs_graph_t *g, int m)
             pick[num_pick++] = n2;
         }
 
-    for(n1=m+1; n1<g->num_nodes; n1++)            /* add other nodes */
+    for(n1=m+1; n1<g->num_nodes; n1++)   /* add other nodes */
     {
         t=0;
-        while(t<m)                                   /* insert m edges */
+        while(t<m) /* insert m edges */
         {
             do
                 n2 = (int) pick[(int) floor(drand48()*num_pick)];
