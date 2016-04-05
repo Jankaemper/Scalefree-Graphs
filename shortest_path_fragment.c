@@ -219,7 +219,7 @@ double *constant_propability(int constant,int current_nodes, int num_pick, int *
 /** RETURNS:                                            **/
 /**     (nothing)                                       **/
 /*********************************************************/
-void gs_preferential_attachment_constant(gs_graph_t *g, int m)
+void gs_preferential_attachment_constant(gs_graph_t *g, int m, double constant)
 {
     int i,t;
     int n1, n2;
@@ -263,7 +263,7 @@ void gs_preferential_attachment_constant(gs_graph_t *g, int m)
         t=0;
         while(t<m)                                   /* insert m edges */
         {
-            probability = constant_propability(1, n1, num_pick, pick);
+            probability = constant_propability(constant, n1, num_pick, pick);
             double drand48();
             checkProbability = drand48();
             for(i=0;i<n1;i++)
@@ -676,7 +676,7 @@ void runExperiments(int runs, int n, int m)
 /**                n: number of Nodes               					     	   **/
 /**                m: pref attachment parameter        					     	   **/
 /*********************************************/
-void runExperimentsConstant(int runs, int n, int m)
+void runExperimentsConstant(int runs, int n, int m, double k_0)
 {
     int i,j,k;
     gs_graph_t *g;
@@ -697,7 +697,7 @@ void runExperimentsConstant(int runs, int n, int m)
     {
         //init scale free graph of size n
         g = gs_create_graph(n);
-        gs_preferential_attachment_constant(g, m);
+        gs_preferential_attachment_constant(g, m, k_0);
 
         //compute all shortest paths with floyd warshall and
         gs_all_pair_shortest_paths(g,dist,0);
@@ -708,7 +708,7 @@ void runExperimentsConstant(int runs, int n, int m)
 
     //output in file
     char filename[1000];
-    sprintf(filename, "OutputScaleFree_Normed/histogram_N%d_M%d.dat", n, m);
+    sprintf(filename, "Output_constant/histogram_N%d_M%d_k%f.dat", n, m, k_0);
     printHistogramNormed(histogram, n, filename, n, 1);
 
     free(histogram);
