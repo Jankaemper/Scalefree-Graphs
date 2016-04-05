@@ -179,6 +179,116 @@ void gs_preferential_attachment(gs_graph_t *g, int m)
     free(pick);
 }
 
+/******************* constant_probability() **************/
+double *constant_propability(int constant,int current_nodes, int num_pick, int *pick)
+{
+    double *counter, *probability, proof;
+    proof = 0.0;
+    counter = (double *) malloc(num_pick*sizeof(double));
+    probability = (double *) malloc(num_pick*sizeof(double));
+    int i,j;
+
+    for(j=0;j<current_nodes;j++)
+     {
+       for(i=0; i<num_pick; i++)
+        {
+            if (pick[i] == j)
+            {
+            counter[j] += 1.0;
+            }
+        }
+      proof += (counter[j]+constant)/(num_pick+(constant*current_nodes));
+      probability[j] = proof;
+    }
+    return(probability);
+}
+
+
+
+/******************* gs_preferential_attachment_constant() ********/
+/** Generates graph bei "adding" one node after the     **/
+/** other. For each "added" node, exactly m edges to    **/
+/** already "old added" nodes are inserted randomly. The**/
+/** probability that an "old added" nodes receives a new**/
+/** edge is proportional to its current degree          **/
+/** No self loops are allowed. No edge is allowed to    **/
+/*+ appear twice!                                       **/
+/** PARAMETERS: (*)= return-paramter                    **/
+/**         (*) g: graph                                **/
+/**             m: number of edges to be added          **/
+/** RETURNS:                                            **/
+/**     (nothing)                                       **/
+/*********************************************************/
+void gs_preferential_attachment_constant(gs_graph_t *g, int m)
+{
+  int i,t;
+  int n1, n2;
+  int *pick;            /* array which holds for each edge {n1,n2} */
+                        /* the numbers n1 and n2. Used for picking */
+                       /* nodes proportional to its current degree */
+  int num_pick;              /* number of entries in 'pick' so far */
+  int max_pick;                       /* maximum number of entries */
+  double *probability, checkProbability;
+  checkProbability = 0.0;
+  if(g->num_nodes < m+1)
+  {
+      printf("graph too small to have at least %d edges per node!\n", m);
+      exit(1);
+  }
+  max_pick = 2*m*g->num_nodes- m*(m+1);
+  pick = (int *) malloc(max_pick*sizeof(int));
+  probability = (double *)malloc(max_pick*sizeof(double));
+  num_pick=0;
+
+  for(n1=0; n1<m+1; n1++) /* start: complete subgraph of m+1 nodes */
+
+    for(n2=n1+1; n2<m+1; n2++)
+    {
+      gs_insert_edge(g, n1, n2);
+      pick[num_pick++] = n1;
+      pick[num_pick++] = n2;
+    }
+
+/*
+The nodes are added the same way like they are added in
+gs_preferential_attachment the only difference is the implementation.
+Instead of only using the 'pick' array to insert edgescreation,
+we calculate every probability for edges to be added to a node.
+This gives the possiblity to add a constant value to each possibility
+and therefore we are ableto influence the exponential structure of the edge
+distribution.
+*/
+  for(n1=m+1; n1<g->num_nodes; n1++)            /* add other nodes */
+  {
+    t=0;
+    while(t<m)                                   /* insert m edges */
+    {
+      probability = constant_propability(1, n1, num_pick, pick);
+      double drand48();
+      checkProbability = drand48();
+      for(i=0;i<n1;i++)
+      {
+        printf("%d %f %f\n",i, probability[i], checkProbability);
+        if(checkProbability <= probability[i])
+        {
+          n2 = i;
+          break;
+        }
+      }
+      printf("%d %d\n", n1, n2);
+      if(!gs_edge_exists(g, n1, n2))
+      {
+	        gs_insert_edge(g, n1, n2);
+	        pick[num_pick++] = n1;
+	        pick[num_pick++] = n2;
+	        t++;
+      }
+    }
+  }
+free(pick);
+}
+
+
 /******************* graph_ausgabe() *********************/
 /** Erstellt Ausgabedatei mit entsprechender            **/
 /** Formatierung.                                       **/
@@ -231,7 +341,7 @@ void exportGraphDot(gs_graph_t *g,int n, int m)
     {
         elem_t *next_neighb;
         next_neighb = g->node[i].neighbors;
-        while(next_neighb != NULL) 
+        while(next_neighb != NULL)
         {
             fprintf(file,"%d -- %d\n", i, next_neighb->info);
             next_neighb = next_neighb->next;
@@ -280,7 +390,7 @@ void printedges(gs_graph_t *g, int num_nodes, char destination[]) {
         fprintf(file, "%f/%f: ",g->node[i].x_Coord,g->node[i].y_Coord);
         elem_t *next_neighb;
         next_neighb = g->node[i].neighbors;
-        while(next_neighb != NULL) 
+        while(next_neighb != NULL)
         {
             fprintf(file,"%d: %f ", next_neighb->info, sqrt(pow(g->node[i].x_Coord - g->node[next_neighb->info].x_Coord,2)+pow(g->node[i].y_Coord - g->node[next_neighb->info].y_Coord,2)));
             next_neighb = next_neighb->next;
@@ -341,7 +451,7 @@ void printHistogramNormed(double *histogram, int n, char destination[], int numB
         {
             fprintf(file,"%d %.10f\n", i+1, histogram[i]/numEntries);
         }
-        else 
+        else
         {
             fprintf(file,"%d %.10f\n", i, histogram[i]/numEntries);
         }
@@ -432,7 +542,7 @@ void fillHistogramDiscrete(double **dist, double **histogram, int n)
 
 /**************fillHistogramContinuous() **************/
 /** for a given dist matrix and defined number of bins   **/
-/** packs the distances (representing shortest paths) into bin of histogram. 	   **/	
+/** packs the distances (representing shortest paths) into bin of histogram. 	   **/
 /** Non existing paths between vertices will be ignored							   **/
 /** PARAMETERS: (*)= return-parameter                 							   **/
 /**                dist: distance matrix 			 						       **/
@@ -504,7 +614,7 @@ double computeMeanShortestPath(double **dist, int n)
             {
                 countExisting ++;
                 sum += dist[i][j];
-            }        
+            }
         }
     }
     return sum/countExisting;
@@ -541,7 +651,7 @@ void runExperiments(int runs, int n, int m)
         g = gs_create_graph(n);
         gs_preferential_attachment(g, m);
 
-        //compute all shortest paths with floyd warshall and 
+        //compute all shortest paths with floyd warshall and
         gs_all_pair_shortest_paths(g,dist,0);
 
         //create histogram from distance matrix
@@ -591,7 +701,7 @@ void runExperimentsPlanar(int runs, int n)
         //create histogram from distance matrix
         fillHistogramContinuous(dist,&histogram,n,numBins);
     }
-    printDistances(dist,  n, "OutputPlanar_Normed/dists.dat"); 
+    printDistances(dist,  n, "OutputPlanar_Normed/dists.dat");
     printedges(g, n,  "OutputPlanar_Normed/edges.dat");
 
 
@@ -647,4 +757,3 @@ void runMeanExperimentsPlanar(int runs, int stepSize)
         printf("%d %f\n", n, meanShortestPath);
     }
 }
-
