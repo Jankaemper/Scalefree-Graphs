@@ -30,7 +30,7 @@ int main(int argc, char **argv)
     }
     mode = atoi(argv[argz++]);
 
-    if (mode = 1)
+    if (mode == 1)
     {
         //run experiments for fixed graph size and defined parameter with normal pref attachment (path distribution)
         if (argc >= 4)
@@ -47,7 +47,7 @@ int main(int argc, char **argv)
             printf("m = Anzahl der Kanten die hinzugefügt werden\n");
         }
     }
-    else if (mode = 2)
+    else if (mode == 2)
     {
         //run experiments for fixed graph size and defined parameter with constant k_0 in pref attachment (path distribution)
         if (argc >= 5)
@@ -66,7 +66,7 @@ int main(int argc, char **argv)
             printf("k_0 = Konstante für preferential attachment\n");
         }
     }
-    else if (mode = 3)
+    else if (mode == 3)
     { 
         //run experiments on planar graph for fixed graph size (path distribution)
         if (argc >=3)
@@ -81,7 +81,7 @@ int main(int argc, char **argv)
             printf("N = Anzahl der Knoten im Graph\n");
         }
     }
-    else if (mode = 4)
+    else if (mode == 4)
     {
         //run experiments on planar graph for different graph sizes (mean shortest path length)
         if (argc >=4)

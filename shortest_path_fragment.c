@@ -268,14 +268,14 @@ void gs_preferential_attachment_constant(gs_graph_t *g, int m, double constant)
             checkProbability = drand48();
             for(i=0;i<n1;i++)
             {
-                printf("%d %f %f\n",i, probability[i], checkProbability);
+                //printf("%d %f %f\n",i, probability[i], checkProbability);
                 if(checkProbability <= probability[i])
                 {
                     n2 = i;
                     break;
                 }
             }
-            printf("%d %d\n", n1, n2);
+            //printf("%d %d\n", n1, n2);
             if(!gs_edge_exists(g, n1, n2))
             {
                 gs_insert_edge(g, n1, n2);
