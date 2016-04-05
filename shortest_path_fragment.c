@@ -189,16 +189,16 @@ double *constant_propability(int constant,int current_nodes, int num_pick, int *
     int i,j;
 
     for(j=0;j<current_nodes;j++)
-     {
-       for(i=0; i<num_pick; i++)
+    {
+        for(i=0; i<num_pick; i++)
         {
             if (pick[i] == j)
             {
-            counter[j] += 1.0;
+                counter[j] += 1.0;
             }
         }
-      proof += (counter[j]+constant)/(num_pick+(constant*current_nodes));
-      probability[j] = proof;
+        proof += (counter[j]+constant)/(num_pick+(constant*current_nodes));
+        probability[j] = proof;
     }
     return(probability);
 }
@@ -221,71 +221,71 @@ double *constant_propability(int constant,int current_nodes, int num_pick, int *
 /*********************************************************/
 void gs_preferential_attachment_constant(gs_graph_t *g, int m)
 {
-  int i,t;
-  int n1, n2;
-  int *pick;            /* array which holds for each edge {n1,n2} */
-                        /* the numbers n1 and n2. Used for picking */
-                       /* nodes proportional to its current degree */
-  int num_pick;              /* number of entries in 'pick' so far */
-  int max_pick;                       /* maximum number of entries */
-  double *probability, checkProbability;
-  checkProbability = 0.0;
-  if(g->num_nodes < m+1)
-  {
-      printf("graph too small to have at least %d edges per node!\n", m);
-      exit(1);
-  }
-  max_pick = 2*m*g->num_nodes- m*(m+1);
-  pick = (int *) malloc(max_pick*sizeof(int));
-  probability = (double *)malloc(max_pick*sizeof(double));
-  num_pick=0;
-
-  for(n1=0; n1<m+1; n1++) /* start: complete subgraph of m+1 nodes */
-
-    for(n2=n1+1; n2<m+1; n2++)
+    int i,t;
+    int n1, n2;
+    int *pick;            /* array which holds for each edge {n1,n2} */
+    /* the numbers n1 and n2. Used for picking */
+    /* nodes proportional to its current degree */
+    int num_pick;              /* number of entries in 'pick' so far */
+    int max_pick;                       /* maximum number of entries */
+    double *probability, checkProbability;
+    checkProbability = 0.0;
+    if(g->num_nodes < m+1)
     {
-      gs_insert_edge(g, n1, n2);
-      pick[num_pick++] = n1;
-      pick[num_pick++] = n2;
+        printf("graph too small to have at least %d edges per node!\n", m);
+        exit(1);
     }
+    max_pick = 2*m*g->num_nodes- m*(m+1);
+    pick = (int *) malloc(max_pick*sizeof(int));
+    probability = (double *)malloc(max_pick*sizeof(double));
+    num_pick=0;
 
-/*
-The nodes are added the same way like they are added in
-gs_preferential_attachment the only difference is the implementation.
-Instead of only using the 'pick' array to insert edgescreation,
-we calculate every probability for edges to be added to a node.
-This gives the possiblity to add a constant value to each possibility
-and therefore we are ableto influence the exponential structure of the edge
-distribution.
-*/
-  for(n1=m+1; n1<g->num_nodes; n1++)            /* add other nodes */
-  {
-    t=0;
-    while(t<m)                                   /* insert m edges */
-    {
-      probability = constant_propability(1, n1, num_pick, pick);
-      double drand48();
-      checkProbability = drand48();
-      for(i=0;i<n1;i++)
-      {
-        printf("%d %f %f\n",i, probability[i], checkProbability);
-        if(checkProbability <= probability[i])
+    for(n1=0; n1<m+1; n1++) /* start: complete subgraph of m+1 nodes */
+
+        for(n2=n1+1; n2<m+1; n2++)
         {
-          n2 = i;
-          break;
+            gs_insert_edge(g, n1, n2);
+            pick[num_pick++] = n1;
+            pick[num_pick++] = n2;
         }
-      }
-      printf("%d %d\n", n1, n2);
-      if(!gs_edge_exists(g, n1, n2))
-      {
-	        gs_insert_edge(g, n1, n2);
-	        pick[num_pick++] = n1;
-	        pick[num_pick++] = n2;
-	        t++;
-      }
+
+    /*
+       The nodes are added the same way like they are added in
+       gs_preferential_attachment the only difference is the implementation.
+       Instead of only using the 'pick' array to insert edgescreation,
+       we calculate every probability for edges to be added to a node.
+       This gives the possiblity to add a constant value to each possibility
+       and therefore we are ableto influence the exponential structure of the edge
+       distribution.
+       */
+    for(n1=m+1; n1<g->num_nodes; n1++)            /* add other nodes */
+    {
+        t=0;
+        while(t<m)                                   /* insert m edges */
+        {
+            probability = constant_propability(1, n1, num_pick, pick);
+            double drand48();
+            checkProbability = drand48();
+            for(i=0;i<n1;i++)
+            {
+                printf("%d %f %f\n",i, probability[i], checkProbability);
+                if(checkProbability <= probability[i])
+                {
+                    n2 = i;
+                    break;
+                }
+            }
+            printf("%d %d\n", n1, n2);
+            if(!gs_edge_exists(g, n1, n2))
+            {
+                gs_insert_edge(g, n1, n2);
+                pick[num_pick++] = n1;
+                pick[num_pick++] = n2;
+                t++;
+            }
+        }
     }
-  }
-free(pick);
+    free(pick);
 }
 
 
@@ -650,6 +650,54 @@ void runExperiments(int runs, int n, int m)
         //init scale free graph of size n
         g = gs_create_graph(n);
         gs_preferential_attachment(g, m);
+
+        //compute all shortest paths with floyd warshall and
+        gs_all_pair_shortest_paths(g,dist,0);
+
+        //create histogram from distance matrix
+        fillHistogramDiscrete(dist,&histogram,n);
+    }
+
+    //output in file
+    char filename[1000];
+    sprintf(filename, "OutputScaleFree_Normed/histogram_N%d_M%d.dat", n, m);
+    printHistogramNormed(histogram, n, filename, n, 1);
+
+    free(histogram);
+}
+
+
+/**************runExperimentsPlanarConstant() **************/
+/** creates scale-free graphs of fixed size and computes the histogram of  		   **/
+/** all shortes paths in graph 					   						 		   **/
+/** with constant value k_0 in probability **/
+/** PARAMETERS: (*)= return-parameter                 							   **/
+/**                run: number of runs 			 						       	   **/
+/**                n: number of Nodes               					     	   **/
+/**                m: pref attachment parameter        					     	   **/
+/*********************************************/
+void runExperimentsConstant(int runs, int n, int m)
+{
+    int i,j,k;
+    gs_graph_t *g;
+
+
+    //init dist array
+    double **dist;
+    dist = (double**)malloc(sizeof(double*)*n);
+    for (i=0;i<n;i++)
+    {
+        dist[i] = (double*)malloc(sizeof(double)*n);
+    }
+
+    //perform runs
+    double *histogram;
+    histogram = (double*)malloc(sizeof(double)*n);
+    for (k=0;k<runs;k++)
+    {
+        //init scale free graph of size n
+        g = gs_create_graph(n);
+        gs_preferential_attachment_constant(g, m);
 
         //compute all shortest paths with floyd warshall and
         gs_all_pair_shortest_paths(g,dist,0);
