@@ -11,49 +11,92 @@
 #include "list.h"
 #include "graphs_lists.h"
 
-//test main used for debugging 
-//prints graph into dot-readable format in order to visualize the graph layout with all nodes and edges
-void testMain(int num_nodes,int m)
-{
-    int i;
-    gs_graph_t *g;
-    g = gs_create_graph(num_nodes);
-    gs_preferential_attachment(g, m);
-
-    exportGraphDot(g,num_nodes,m);
-
-    double **dist;
-    dist = (double**)malloc(sizeof(double*)*(g->num_nodes));
-    for (i=0;i<g->num_nodes;i++)
-    {
-
-        dist[i] = (double*)malloc(sizeof(double)*g->num_nodes);
-    }
-    computeShortestPaths(g,dist);
-    printDistances(dist,num_nodes,m);
-}
-
 
 int main(int argc, char **argv)
 {
-    int num_nodes;                             
+    int mode;
+    int num_nodes,max_nodes,step_size;                             
+    double k_0;
     gs_graph_t *g;
     int num_real, m, i;                        
     int argz = 1;                 
 
 	//read command-line arguments
-    if(argc != 3)
+    if(argc <  2)
     {
-        printf("USAGE %s <N> <m> \n", argv[0]);
-        printf("N = Anzahl der Knoten im Graph\n");
-        printf("m = Anzahl der Kanten die hinzugefügt werden\n");
+        printf("Please specify experiment mode for %s:\n" , argv[0]);
+        printf("mode: 1-Scale Free 2-Scale Free Constant Pref 3-Planar 4-Planar Mean\n");
         exit(1);
     }
-    num_nodes = atoi(argv[argz++]);
-    m = atoi(argv[argz++]);               /* read number of nodes */
+    mode = atoi(argv[argz++]);
 
-    //run experiments for fixed graph size and defined parameter
-    runExperiments(10000,num_nodes,m);
+    if (mode == 1)
+    {
+        //run experiments for fixed graph size and defined parameter with normal pref attachment (path distribution)
+        if (argc >= 4)
+        {
+            num_nodes = atoi(argv[argz++]);
+            m = atoi(argv[argz++]);              
+            runExperiments(10000,num_nodes,m);
+        }
+        else
+        {
+            printf("USAGE %s <mode> <N> <m> \n", argv[0]);
+            printf("mode = 1-Scale Free\n");
+            printf("N = Anzahl der Knoten im Graph\n");
+            printf("m = Anzahl der Kanten die hinzugefügt werden\n");
+        }
+    }
+    else if (mode == 2)
+    {
+        //run experiments for fixed graph size and defined parameter with constant k_0 in pref attachment (path distribution)
+        if (argc >= 5)
+        {
+            num_nodes = atoi(argv[argz++]);
+            m = atoi(argv[argz++]);              
+            k_0 = atof(argv[argz++]);
+            runExperimentsConstant(10000,num_nodes,m,k_0);
+        }
+        else
+        {
+            printf("USAGE %s <mode> <N> <m> <k0>\n", argv[0]);
+            printf("mode = 2-Scale Free Constant Pref\n");
+            printf("N = Anzahl der Knoten im Graph\n");
+            printf("m = Anzahl der Kanten die hinzugefügt werden\n");
+            printf("k_0 = Konstante für preferential attachment\n");
+        }
+    }
+    else if (mode == 3)
+    { 
+        //run experiments on planar graph for fixed graph size (path distribution)
+        if (argc >=3)
+        {
+            num_nodes = atoi(argv[argz++]);
+            runExperimentsPlanar(10000,num_nodes);
+        }
+        else
+        {
+            printf("USAGE %s <mode> <N> <m> <k0>\n", argv[0]);
+            printf("mode = 3-Planar Graph \n");
+            printf("N = Anzahl der Knoten im Graph\n");
+        }
+    }
+    else if (mode == 4)
+    {
+        //run experiments on planar graph for different graph sizes (mean shortest path length)
+        if (argc >=4)
+        {
+            max_nodes = atoi(argv[argz++]);
+            step_size = atoi(argv[argz++]);
+            runMeanExperimentsPlanar(max_nodes,step_size);
+        }
+        else
+        {
+            printf("USAGE %s <mode> <max> <stepSize>\n", argv[0]);
+            printf("mode = 4-Planar Graph Mean\n");
+            printf("max = maximale Graphgroesse\n");
+            printf("stepSize = Schrittweite für Graphgroesse\n");
+        }
+    }
     return(0);
-
 }
