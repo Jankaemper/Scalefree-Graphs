@@ -478,7 +478,7 @@ void gs_all_pair_shortest_paths(gs_graph_t *g,double **dist,int weighted)
             }
             else
             {
-                //inifintiy
+                //workaround inifintiy
                 dist[i][j] = 100000 ;
             }
         }
@@ -494,11 +494,13 @@ void gs_all_pair_shortest_paths(gs_graph_t *g,double **dist,int weighted)
             if (weighted==0)
             {
                 dist[i][next_neighb->info] = 1.0;
+                dist[next_neighb->info][i] = 1.0;
             }
             //if weighted is true, then all edges should have their euclidean distance as length
             else
             {
                 dist[i][next_neighb->info] = sqrt(pow(g->node[i].x_Coord - g->node[next_neighb->info].x_Coord,2)+pow(g->node[i].y_Coord - g->node[next_neighb->info].y_Coord,2));
+                dist[next_neighb->info][i] = sqrt(pow(g->node[i].x_Coord - g->node[next_neighb->info].x_Coord,2)+pow(g->node[i].y_Coord - g->node[next_neighb->info].y_Coord,2));
             }
             next_neighb = next_neighb->next;
         }
@@ -522,10 +524,10 @@ void gs_all_pair_shortest_paths(gs_graph_t *g,double **dist,int weighted)
 /**************fillHistogramDiscrete() **************/
 /** for a given dist matrix with integer values   **/
 /** packs the distances (representing shortest paths) into bins of histogram 	   **/
-/** PARAMETERS: (*)= return-parameter                 							   **/
-/**                dist: distance matrix 			 						       **/
-/**                histogram: given histogram              					       **/
-/**                n: number of Nodes               					     	   **/
+/** PARAMETERS: (*)= return-parameter          			   **/
+/**                dist: distance matrix 		       **/
+/**                histogram: given histogram  		       **/
+/**                n: number of Nodes          	     	   **/
 /*********************************************/
 void fillHistogramDiscrete(double **dist, double **histogram, int n)
 {
@@ -597,9 +599,9 @@ void fillHistogramContinuous(double **dist, double **histogram,int n, int numBin
 
 /**************computeMeanShortestPath() **************/
 /** for a given dist matrix computes the mean value of   **/
-/** all shortes paths in graph. Non existing connections between vertices will be ignored  **/
+/** all shortest paths in graph. Non existing connections between vertices will be ignored  **/
 /** PARAMETERS: (*)= return-parameter                 							   **/
-/**                dist: distance matrix 			 						       **/
+/**                dist: distance matrix						       **/
 /**                n: number of Nodes               					     	   **/
 /*********************************************/
 double computeMeanShortestPath(double **dist, int n)
@@ -632,7 +634,6 @@ void runExperiments(int runs, int n, int m)
 {
     int i,j,k;
     gs_graph_t *g;
-
 
     //init dist array
     double **dist;
@@ -734,7 +735,6 @@ void runExperimentsPlanar(int runs, int n)
         dist[i] = (double*)malloc(sizeof(double)*n);
     }
 
-
     //reasonable number of bins for histogram according to literature
     int numBins = sqrt(n);
     double *histogram = (double*)malloc(sizeof(double)*numBins);
@@ -751,7 +751,6 @@ void runExperimentsPlanar(int runs, int n)
     }
     printDistances(dist,  n, "OutputPlanar_Normed/dists.dat");
     printedges(g, n,  "OutputPlanar_Normed/edges.dat");
-
 
     //output in file
     char filename[1000];

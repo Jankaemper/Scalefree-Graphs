@@ -1,43 +1,18 @@
-# Object files
-*.o
-*.ko
-*.obj
-*.elf
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Libraries
-*.lib
-*.a
-*.la
-*.lo
-
-# Shared objects (inc. Windows DLLs)
-*.dll
-*.so
-*.so.*
-*.dylib
-
-# Executables
-*.exe
-*.out
-*.app
-*.i*86
-*.x86_64
-*.hex
-
-# Debug files
-*.dSYM/
-
-# custom
-shortest_path
-shortest_path_planar
-Output/
-Bericht/*.aux
-Bericht/*.gz
-Bericht/*.toc
-Bericht/*.log
-Bericht/*.aux
+Bericht/bericht.aux
+Bericht/bericht.blg
+Bericht/bericht.log
+Bericht/bericht.synctex.gz
+Bericht/bericht.toc
+Bericht/titlepage.log
+Output/distance.dat
+Output/graph_visu.dot
+Output/graph_visu.ps
+Output/testDotLib.dot
+Output/testDotLib.ps
+OutputScaleFree_Normed/histogram_N100_M1.dat
+OutputScaleFree_Normed/histogram_N100_M2.dat
+OutputScaleFree_Normed/histogram_N50_M1.dat
+OutputScaleFree_Normed/histogram_N50_M2.dat
 Plotscripts/fit.log
+shortest_path
+
