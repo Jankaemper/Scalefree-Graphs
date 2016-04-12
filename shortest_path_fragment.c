@@ -437,34 +437,41 @@ void printHistogramNormed(double **histogram, int n, char destination[], int num
     int i,j;
     FILE *file;
     file = fopen(destination, "w");
-	double mean, var;
+	  double *mean, var, sum_mean;
     //counter number of histogram entries for the normation
     int numEntries = 0;
+    mean = (double*)malloc(sizeof(double)*numBins);
+
 
     for(i=startIndex; i<numBins; i++)
     {
-		mean = 0;
-		var = 0;
 		numEntries = 0;
-		for (j = 0; j<runs;j++)
-		{
-			numEntries += histogram[j][i];
-		}
-		mean = numEntries / runs;
-		for (j = 0; j<runs;j++)
-		{
-			var += pow((mean - histogram[j][i]),2);
-		}
-		var = sqrt(var/(runs-1));
+  		for (j = 0; j<runs;j++)
+  		{
+  			numEntries += histogram[j][i];
+  		}
+  	mean[i] = numEntries / runs;
+    sum_mean += mean[i];
+    }
+
+    for(i=startIndex; i<numBins; i++)
+    {
+      var = 0;
+      mean[i] = mean[i]/sum_mean;
+  		for (j = 0; j<runs;j++)
+  		{
+  			var += pow((mean[i] - histogram[j][i]),2);
+  		}
+  		var = sqrt(var/(runs-1));
 
  		//if histogram labels start at 0, then add offset of 1 in order to avoid fitting problems (division by zero)
         if (startIndex == 0)
         {
-            fprintf(file,"%d %.10f %.10f \n", i+1, mean, var);
+            fprintf(file,"%d %.10f %.10f \n", i+1, mean[i], var);
         }
         else
         {
-            fprintf(file,"%d %.10f %.10f \n", i, mean, var);
+            fprintf(file,"%d %.10f %.10f \n", i, mean[i], var);
         }
     }
 }
