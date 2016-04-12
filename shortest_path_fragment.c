@@ -182,8 +182,8 @@ void gs_preferential_attachment(gs_graph_t *g, int m)
 /******************* constant_probability() **************/
 double *constant_propability(double constant,int current_nodes, int num_pick, int *pick)
 {
-    double *counter, *probability, proof;
-    proof = 0.0;
+    double *counter, *probability, sum_prob;
+    sum_prob = 0.0;
     counter = (double *) malloc(num_pick*sizeof(double));
     probability = (double *) malloc(num_pick*sizeof(double));
     int i,j;
@@ -198,8 +198,8 @@ double *constant_propability(double constant,int current_nodes, int num_pick, in
             }
 
         }
-        proof += (counter[j]+constant)/(num_pick+(constant*current_nodes));
-        probability[j] = proof;
+        sum_prob += (counter[j]+constant)/(num_pick+(constant*current_nodes));
+        probability[j] = sum_prob;
     }
     return(probability);
 }
@@ -220,14 +220,14 @@ double *constant_propability(double constant,int current_nodes, int num_pick, in
 /** RETURNS:                                            **/
 /**     (nothing)                                       **/
 /*********************************************************/
-void gs_preferential_attachment_constant(gs_graph_t *g, int m, double constant)
+void gs_preferential_attachment_constant(gs_graph_t *g, int m, double k_0)
 {
     int i,t;
     int n1, n2;
     int *pick;            /* array which holds for each edge {n1,n2} */
-    /* the numbers n1 and n2. Used for picking */
-    /* nodes proportional to its current degree */
-    int num_pick;              /* number of entries in 'pick' so far */
+                          /* the numbers n1 and n2. Used for picking */
+                          /* nodes proportional to its current degree */
+    int num_pick;         /* number of entries in 'pick' so far */
     int max_pick;                       /* maximum number of entries */
     double *probability, checkProbability;
     checkProbability = 0.0;
@@ -264,12 +264,11 @@ void gs_preferential_attachment_constant(gs_graph_t *g, int m, double constant)
         t=0;
         while(t<m)                                   /* insert m edges */
         {
-            probability = constant_propability(constant, n1, num_pick, pick);
+            probability = constant_propability(k_0, n1, num_pick, pick);
             double drand48();
             checkProbability = drand48();
             for(i=0;i<n1;i++)
             {
-                //printf("%d %f %f\n",i, probability[i], checkProbability);
                 if(checkProbability <= probability[i])
                 {
                     n2 = i;
@@ -437,10 +436,11 @@ void printHistogramNormed(double **histogram, int n, char destination[], int num
     int i,j;
     FILE *file;
     file = fopen(destination, "w");
-	  double *mean, var, sum_mean;
+	  double *mean, *var, sum_mean, sum_var;
     //counter number of histogram entries for the normation
     int numEntries = 0;
     mean = (double*)malloc(sizeof(double)*numBins);
+    var = (double*)malloc(sizeof(double)*numBins);
 
 
     for(i=startIndex; i<numBins; i++)
@@ -456,22 +456,25 @@ void printHistogramNormed(double **histogram, int n, char destination[], int num
 
     for(i=startIndex; i<numBins; i++)
     {
-      var = 0;
-      mean[i] = mean[i]/sum_mean;
-  		for (j = 0; j<runs;j++)
+      for (j = 0; j<runs;j++)
   		{
-  			var += pow((mean[i] - histogram[j][i]),2);
+  			var[i] += pow((mean[i] - histogram[j][i]),2);
   		}
-  		var = sqrt(var/(runs-1));
-
+  		var[i] = sqrt(var[i]/(runs-1));
+      sum_var += var[i];
+      mean[i] = mean[i]/sum_mean;
+    }
+    for(i=startIndex; i<numBins; i++)
+    {
+      var[i] = var[i]/sum_var;
  		//if histogram labels start at 0, then add offset of 1 in order to avoid fitting problems (division by zero)
         if (startIndex == 0)
         {
-            fprintf(file,"%d %.10f %.10f \n", i+1, mean[i], var);
+            fprintf(file,"%d %.10f %.10f \n", i+1, mean[i], var[i]);
         }
         else
         {
-            fprintf(file,"%d %.10f %.10f \n", i, mean[i], var);
+            fprintf(file,"%d %.10f %.10f \n", i, mean[i], var[i]);
         }
     }
 }
