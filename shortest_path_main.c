@@ -15,11 +15,11 @@
 int main(int argc, char **argv)
 {
     int mode;
-    int num_nodes,max_nodes,step_size;                             
+    int num_nodes,max_nodes,step_size;
     double k_0;
     gs_graph_t *g;
-    int num_real, m, i;                        
-    int argz = 1;                 
+    int num_real, m, i;
+    int argz = 1;
 
 	//read command-line arguments
     if(argc <  2)
@@ -36,7 +36,7 @@ int main(int argc, char **argv)
         if (argc >= 4)
         {
             num_nodes = atoi(argv[argz++]);
-            m = atoi(argv[argz++]);              
+            m = atoi(argv[argz++]);
             runExperiments(10000,num_nodes,m);
         }
         else
@@ -53,9 +53,9 @@ int main(int argc, char **argv)
         if (argc >= 5)
         {
             num_nodes = atoi(argv[argz++]);
-            m = atoi(argv[argz++]);              
+            m = atoi(argv[argz++]);
             k_0 = atof(argv[argz++]);
-            runExperimentsConstant(10000,num_nodes,m,k_0);
+            runExperimentsConstant(1,num_nodes,m,k_0);
         }
         else
         {
@@ -67,7 +67,7 @@ int main(int argc, char **argv)
         }
     }
     else if (mode == 3)
-    { 
+    {
         //run experiments on planar graph for fixed graph size (path distribution)
         if (argc >=3)
         {

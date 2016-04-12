@@ -2,7 +2,8 @@
 
 for N in 50 100 200 400 
 do
-	for k_0 in -2 -1 0.5 2
-	./shortest_path_planar $N 2 $k_0
-	done
+for k_0 in -1.5 -0.5 0 0.5 2
+do
+./shortest_path_constant 2 $N 2 $k_0
+done
 done

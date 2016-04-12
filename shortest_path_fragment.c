@@ -180,7 +180,7 @@ void gs_preferential_attachment(gs_graph_t *g, int m)
 }
 
 /******************* constant_probability() **************/
-double *constant_propability(int constant,int current_nodes, int num_pick, int *pick)
+double *constant_propability(double constant,int current_nodes, int num_pick, int *pick)
 {
     double *counter, *probability, proof;
     proof = 0.0;
@@ -196,6 +196,7 @@ double *constant_propability(int constant,int current_nodes, int num_pick, int *
             {
                 counter[j] += 1.0;
             }
+
         }
         proof += (counter[j]+constant)/(num_pick+(constant*current_nodes));
         probability[j] = proof;
