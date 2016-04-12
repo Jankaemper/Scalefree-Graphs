@@ -2,6 +2,7 @@ set datafile missing '0.000000'
 set multiplot layout 2,2
 set key right reverse Right
 set title "Power Law"
+set logscale y
 f(x) = k * (C*C/x)**(l*l*x)
 k=1.2
 l=0.0001

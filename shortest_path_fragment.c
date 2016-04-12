@@ -432,29 +432,39 @@ void printHistogram(double *histogram, int n, char destination[],int numBins, in
 /**                numBins: Histogram number of bins						       **/
 /**                startIndex: first bin to be printed 						       **/
 /*********************************************/
-void printHistogramNormed(double *histogram, int n, char destination[], int numBins, int startIndex)
+void printHistogramNormed(double **histogram, int n, char destination[], int numBins, int startIndex, int runs)
 {
-    int i;
+    int i,j;
     FILE *file;
     file = fopen(destination, "w");
-
+	double mean, var;
     //counter number of histogram entries for the normation
     int numEntries = 0;
+
     for(i=startIndex; i<numBins; i++)
     {
-        numEntries += histogram[i];
-    }
-    //for each entry print out the number of occurences in  bin divided by total number of entries
-    for(i=startIndex; i<numBins; i++)
-    {
-        //if histogram labels start at 0, then add offset of 1 in order to avoid fitting problems (division by zero)
+		mean = 0;
+		var = 0;
+		numEntries = 0;
+		for (j = 0; j<runs;j++)
+		{
+			numEntries += histogram[j][i];
+		}
+		mean = numEntries / runs;
+		for (j = 0; j<runs;j++)
+		{
+			var += pow((mean - histogram[j][i]),2);
+		}
+		var = sqrt(var/(runs-1));
+
+ 		//if histogram labels start at 0, then add offset of 1 in order to avoid fitting problems (division by zero)
         if (startIndex == 0)
         {
-            fprintf(file,"%d %.10f\n", i+1, histogram[i]/numEntries);
+            fprintf(file,"%d %.10f %.10f \n", i+1, mean, var);
         }
         else
         {
-            fprintf(file,"%d %.10f\n", i, histogram[i]/numEntries);
+            fprintf(file,"%d %.10f %.10f \n", i, mean, var);
         }
     }
 }
@@ -530,14 +540,14 @@ void gs_all_pair_shortest_paths(gs_graph_t *g,double **dist,int weighted)
 /**                histogram: given histogram  		       **/
 /**                n: number of Nodes          	     	   **/
 /*********************************************/
-void fillHistogramDiscrete(double **dist, double **histogram, int n)
+void fillHistogramDiscrete(double **dist, double ***histogram, int k, int n)
 {
     int i,j;
     for (i=0;i<n;i++)
     {
         for (j=i+1;j<n;j++)
         {
-            (*histogram)[(int)dist[i][j]]++;
+            (*histogram)[k][(int)dist[i][j]]++;
         }
     }
 }
@@ -645,8 +655,12 @@ void runExperiments(int runs, int n, int m)
     }
 
     //perform runs
-    double *histogram;
-    histogram = (double*)malloc(sizeof(double)*n);
+ 	double **histogram;
+    histogram = (double**)malloc(sizeof(double*)*runs);
+    for (i=0;i<runs;i++)
+    {
+        histogram[i] = (double*)malloc(sizeof(double)*n);
+    }
     for (k=0;k<runs;k++)
     {
         //init scale free graph of size n
@@ -657,13 +671,13 @@ void runExperiments(int runs, int n, int m)
         gs_all_pair_shortest_paths(g,dist,0);
 
         //create histogram from distance matrix
-        fillHistogramDiscrete(dist,&histogram,n);
+        fillHistogramDiscrete(dist,&histogram,k,n);
     }
 
     //output in file
     char filename[1000];
     sprintf(filename, "OutputScaleFree_Normed/histogram_N%d_M%d.dat", n, m);
-    printHistogramNormed(histogram, n, filename, n, 1);
+    printHistogramNormed(histogram, n, filename, n, 1, runs);
 
     free(histogram);
 }
@@ -705,13 +719,13 @@ void runExperimentsConstant(int runs, int n, int m, double k_0)
         gs_all_pair_shortest_paths(g,dist,0);
 
         //create histogram from distance matrix
-        fillHistogramDiscrete(dist,&histogram,n);
+ //       fillHistogramDiscrete(dist,&histogram,n);
     }
 
     //output in file
     char filename[1000];
     sprintf(filename, "Output_constant/histogram_N%d_M%d_k%f.dat", n, m, k_0);
-    printHistogramNormed(histogram, n, filename, n, 1);
+ //   printHistogramNormed(histogram, n, filename, n, 1);
 
     free(histogram);
 }
@@ -748,7 +762,7 @@ void runExperimentsPlanar(int runs, int n)
         gs_all_pair_shortest_paths(g,dist,1);
 
         //create histogram from distance matrix
-        fillHistogramContinuous(dist,&histogram,n,numBins);
+   //     fillHistogramContinuous(dist,&histogram,n,numBins);
     }
     printDistances(dist,  n, "OutputPlanar_Normed/dists.dat");
     printedges(g, n,  "OutputPlanar_Normed/edges.dat");
@@ -756,7 +770,7 @@ void runExperimentsPlanar(int runs, int n)
     //output in file
     char filename[1000];
     sprintf(filename, "OutputPlanar_Normed/histogram_N%d.dat", n);
-    printHistogramNormed(histogram, n, filename, numBins, 0);
+ //   printHistogramNormed(histogram, n, filename, numBins, 0);
 
     free(histogram);
 }
