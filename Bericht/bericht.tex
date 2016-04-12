@@ -116,7 +116,7 @@ Auf beide Weisen wird ein Histogramm erstellt, welches die Verteilung der kürze
 Im letzten Teil der Zusatzaufgabe soll anstelle der Verteilung aller kürzesten Wege die mittlere kürzeste Weglänge in Abhängigkeit der Größe $n$ untersucht werden. Dies übernimmt die Funktion \textit{computeMeanShortestPath}, welche alle existierenden kürzesten Wege im gegebenen Graphen zählt und deren Längen mittelt.
 
 \subsection{Simulationssteuerung}
-Die Steuerung der Simulationsläufe erfolgt in den Methoden \textit{runExperiments} (skalenfreie Graphen), \textit{runExperimentsConstant} (skalenfreie Graphen mit allgemeinem preferential attachment), \textit{runExperimentsPlanar} (ebene Zufallsgraphen) und \textit{runMeanExperimentsPlanar} (mittlere Weglänge in ebenen Zufallsgraphen). Der Ablauf ist in allen Fällen gleich: Eine Schleife führt eine festgelegte Anzahl an Simulationsläufen durch. In jedem Lauf wird zunächst ein neuer Graph erzeugt, dann die kürzesten Wege berechnet und die Ergebnisse zwischengespeichert. Im Falle der Verteilungsuntersuchung wird zur Zwischenspeicherung das Histogram Array verwendet und über die Simulationsläufe hinweg hochgezählt. Im Falle der Mittelwertuntersuchung wird eine Double-Variable genutzt. Ausserdem gibt es hier noch eine äußere Schleife, die über unterschiedliche Graph-Größen iteriert. Nachdem alle Simulationsläufe beendet sind, erfolgt die Ausgabe der Ergebnisse in Dateiform. Die Main-Methode steht in der separaten Datei \textit{shortest_path_main.c}. Hier werden die Nutzereingaben verarbeitet und entsprechend die gewünschten Simulationen durchgeführt anhand der Werte der Kommandozeilenparameter.
+Die Steuerung der Simulationsläufe erfolgt in den Methoden \textit{runExperiments} (skalenfreie Graphen), \textit{runExperimentsConstant} (skalenfreie Graphen mit allgemeinem preferential attachment), \textit{runExperimentsPlanar} (ebene Zufallsgraphen) und \textit{runMeanExperimentsPlanar} (mittlere Weglänge in ebenen Zufallsgraphen). Der Ablauf ist in allen Fällen gleich: Eine Schleife führt eine festgelegte Anzahl an Simulationsläufen durch. In jedem Lauf wird zunächst ein neuer Graph erzeugt, dann die kürzesten Wege berechnet und die Ergebnisse zwischengespeichert. Im Falle der Verteilungsuntersuchung wird zur Zwischenspeicherung das Histogram Array verwendet und über die Simulationsläufe hinweg hochgezählt. Im Falle der Mittelwertuntersuchung wird eine Double-Variable genutzt. Ausserdem gibt es hier noch eine äußere Schleife, die über unterschiedliche Graph-Größen iteriert. Nachdem alle Simulationsläufe beendet sind, erfolgt die Ausgabe der Ergebnisse in Dateiform. Die Main-Methode steht in der separaten Datei \textit{shortest\_path\_main.c}. Hier werden die Nutzereingaben verarbeitet und entsprechend die gewünschten Simulationen durchgeführt anhand der Werte der Kommandozeilenparameter.
 
 \subsection{Automatisierung}
 Um die unterschiedlich parametrisierten Simulationen schnell neu anzustoßen (unterschiedliche Werte für die Parameter $n$ und $m$) existieren die Skripte \textit{simulationScalefree.scr} und \textit{simulationPlanar.scr}. Diese rufen das kompilierte Programm mit allen benötigten Kommandozeilenparametern auf ($n$, ggf $m$, ggf $k_0$). Hier als Beispiel das Skript zur Untersuchung von skalenfreien Graphen:
@@ -139,7 +139,7 @@ Basierend auf denen durch die Skripte erzeugten Dateien mit Endung .dat können 
 
 \section{Resultate}
 \subsection{Skalenfreie Graphen: Normales preferential attachment}
-Für die skalenfreien Graphen wurde folgende Simulationen durchgeführt: 
+Für die skalenfreien Graphen wurde folgende Simulationen durchgeführt (Aufruf: $./simulationScalfree.scr$): 
 \begin{itemize}
 \item[\quad Größe $n$:] $50,100,200,400$
 \item[\quad Parameter $m$:] $1,2$
@@ -163,8 +163,6 @@ Für $m=1$ haben wir die Ergebnisse in Abbildung \ref{fig:m1} erhalten. Die unte
 
 Unabhängig von der Anzahl an Knoten scheint der Fit an das Potenzgesetz hier wesentlich besser zu sein. Dies ist im Falle $m=2$ umgekehrt. Hier lässt sich feststellen, dass für ein Fitting an eine Normalverteilung geringere Abweichungen vorliegen. Die Ergebnisse sind in Abbildung \ref{fig:m2} zu sehen.
 
-TODO: Fehlerbalken / statistische Fehleranalye /Gnuplot Fitting Qualität angeben
-
 \begin{figure}[htb!]
 \begin{subfigure}{.5\textwidth}
   \centering
@@ -186,7 +184,7 @@ Somit lässt sich also schlussfolgern, dass für $m=1$ die Verteilung der kürze
 Flo Master
 
 \subsection{Ebene Zufallsgraphen}
-Für ebene Zufallsgraphen wurden die gleichen Simulationen wie für skalenfreie Graphen durchgeführt. Der Parameter $m$ spielt hier keine Rolle.
+Für ebene Zufallsgraphen wurden die gleichen Simulationen wie für skalenfreie Graphen durchgeführt (Aufruf: $simulationPlanar.scr$). Der Parameter $m$ spielt hier keine Rolle.
 \begin{itemize}
 \item[\quad Größe $n$:] $50,100,200,400$
 \end{itemize}

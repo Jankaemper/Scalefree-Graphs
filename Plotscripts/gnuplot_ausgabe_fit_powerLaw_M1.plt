@@ -7,23 +7,23 @@ f(x) = k * (C/x)**(l*x)
 k=1.2
 l=2.5
 C=1.34
-fit f(x) "../Output/histogram_N50_M1.dat" via k, l, C
-plot f(x), "../Output/histogram_N50_M1.dat" title 'n=50'
+fit f(x) "../OutputScaleFree_Normed/histogram_N50_M1.dat" via k, l, C
+plot f(x), "../OutputScaleFree_Normed/histogram_N50_M1.dat" title 'n=50'
 g(x) = k_2 * (C_2/x)**(l_2*x)
 k_2=0.1
 l_2=1.1
 C_2=10
-fit g(x) "../Output/histogram_N100_M1.dat" via k_2, l_2, C_2
-plot g(x), "../Output/histogram_N100_M1.dat" title 'n=100'
+fit g(x) "../OutputScaleFree_Normed/histogram_N100_M1.dat" via k_2, l_2, C_2
+plot g(x), "../OutputScaleFree_Normed/histogram_N100_M1.dat" title 'n=100'
 h(x) = k_3 * (C_3/x)**(l_3*x)
 k_3=4.5
 l_3=1.2
 C_3=11
-fit h(x) "../Output/histogram_N200_M1.dat" via k_3, l_3, C_3
-plot h(x), "../Output/histogram_N200_M1.dat" title 'n=200'
+fit h(x) "../OutputScaleFree_Normed/histogram_N200_M1.dat" via k_3, l_3, C_3
+plot h(x), "../OutputScaleFree_Normed/histogram_N200_M1.dat" title 'n=200'
 i(x) = k_4 * (C_4/x)**(l_4*x)
 k_4=8.6
 l_4=1.2
 C_4=13.1
-fit i(x) "../Output/histogram_N400_M1.dat" via k_4, l_4, C_4
-plot i(x), "../Output/histogram_N400_M1.dat" title 'n=400'
+fit i(x) "../OutputScaleFree_Normed/histogram_N400_M1.dat" via k_4, l_4, C_4
+plot i(x), "../OutputScaleFree_Normed/histogram_N400_M1.dat" title 'n=400'
