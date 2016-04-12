@@ -7,10 +7,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-
 #include "list.h"
 #include "graphs_lists.h"
-
 
 int main(int argc, char **argv)
 {
@@ -21,7 +19,7 @@ int main(int argc, char **argv)
     int num_real, m, i;
     int argz = 1;
 
-	//read command-line arguments
+    //read command-line arguments
     if(argc <  2)
     {
         printf("Please specify experiment mode for %s:\n" , argv[0]);
@@ -76,7 +74,7 @@ int main(int argc, char **argv)
         }
         else
         {
-            printf("USAGE %s <mode> <N> <m> <k0>\n", argv[0]);
+            printf("USAGE %s <mode> <N>\n", argv[0]);
             printf("mode = 3-Planar Graph \n");
             printf("N = Anzahl der Knoten im Graph\n");
         }
