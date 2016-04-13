@@ -4,15 +4,9 @@ Bericht/bericht.log
 Bericht/bericht.synctex.gz
 Bericht/bericht.toc
 Bericht/titlepage.log
-Output/distance.dat
-Output/graph_visu.dot
-Output/graph_visu.ps
-Output/testDotLib.dot
-Output/testDotLib.ps
 OutputScaleFree_Normed/histogram_N100_M1.dat
 OutputScaleFree_Normed/histogram_N100_M2.dat
 OutputScaleFree_Normed/histogram_N50_M1.dat
 OutputScaleFree_Normed/histogram_N50_M2.dat
 Plotscripts/fit.log
 shortest_path
-

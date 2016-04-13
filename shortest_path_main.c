@@ -53,7 +53,7 @@ int main(int argc, char **argv)
             num_nodes = atoi(argv[argz++]);
             m = atoi(argv[argz++]);
             k_0 = atof(argv[argz++]);
-            runExperimentsConstant(1,num_nodes,m,k_0);
+            runExperimentsConstant(10000,num_nodes,m,k_0);
         }
         else
         {
