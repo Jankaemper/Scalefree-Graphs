@@ -722,9 +722,13 @@ void runExperimentsConstant(int runs, int n, int m, double k_0)
         dist[i] = (double*)malloc(sizeof(double)*n);
     }
 
-    //perform runs
-    double *histogram;
-    histogram = (double*)malloc(sizeof(double)*n);
+    //perform runsdouble **histogram;
+    double **histogram;
+    histogram = (double**)malloc(sizeof(double*)*runs);
+    for (i=0;i<runs;i++)
+    {
+        histogram[i] = (double*)malloc(sizeof(double)*n);
+    }
     for (k=0;k<runs;k++)
     {
         //init scale free graph of size n
@@ -735,13 +739,13 @@ void runExperimentsConstant(int runs, int n, int m, double k_0)
         gs_all_pair_shortest_paths(g,dist,0);
 
         //create histogram from distance matrix
-        //       fillHistogramDiscrete(dist,&histogram,n);
+        fillHistogramDiscrete(dist,&histogram,k,n);
     }
 
     //output in file
     char filename[1000];
     sprintf(filename, "Output_constant/histogram_N%d_M%d_k%f.dat", n, m, k_0);
-    //   printHistogramNormed(histogram, n, filename, n, 1);
+     printHistogramNormed(histogram, n, filename, n, 1, runs);
 
     free(histogram);
 }
