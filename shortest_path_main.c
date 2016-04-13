@@ -35,7 +35,7 @@ int main(int argc, char **argv)
         {
             num_nodes = atoi(argv[argz++]);
             m = atoi(argv[argz++]);
-            runExperiments(10000,num_nodes,m);
+            runExperiments(1000,num_nodes,m);
         }
         else
         {
@@ -53,7 +53,7 @@ int main(int argc, char **argv)
             num_nodes = atoi(argv[argz++]);
             m = atoi(argv[argz++]);
             k_0 = atof(argv[argz++]);
-            runExperimentsConstant(10000,num_nodes,m,k_0);
+            runExperimentsConstant(1000,num_nodes,m,k_0);
         }
         else
         {
@@ -70,7 +70,7 @@ int main(int argc, char **argv)
         if (argc >=3)
         {
             num_nodes = atoi(argv[argz++]);
-            runExperimentsPlanar(10000,num_nodes);
+            runExperimentsPlanar(1000,num_nodes);
         }
         else
         {

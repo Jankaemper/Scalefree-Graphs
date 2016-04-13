@@ -435,52 +435,48 @@ void printHistogram(double *histogram, int n, char destination[],int numBins, in
 void printHistogramNormed(double **histogram, int n, char destination[], int numBins, int startIndex, int runs)
 {
     int i,j;
+    double meanSum = 0;
+    double *mean, *var;
+    mean = (double*)malloc(sizeof(double)*numBins);
+    var = (double*)malloc(sizeof(double)*numBins);
     FILE *file;
     file = fopen(destination, "w");
-    double *mean, var, sum_mean;
-    //counter number of histogram entries for the normation
-    double columnSum = 0;
-    double totalEntries =0;
-    mean = (double*)malloc(sizeof(double)*numBins);
 
+	//compute all means (over runs) for each bin
     for(i=startIndex; i<numBins; i++)
     {
+        mean[i] = 0;
         for (j = 0; j<runs;j++)
         {
-            totalEntries += histogram[j][i];
+            histogram[j][i] = histogram[j][i];
+            mean[i] += histogram[j][i];
         }
-    }
-    totalEntries /= runs;
-            printf("%.10f\n", totalEntries);
-
-    for(i=startIndex; i<numBins; i++)
-    {
-        columnSum = 0;
-        for (j = 0; j<runs;j++)
-        {
-            histogram[j][i] = histogram[j][i]/totalEntries;
-            columnSum += histogram[j][i];
-        }
-        mean[i] = columnSum/runs;
+		mean[i] /= runs;
+		meanSum += mean[i];
     }
 
-    for(i=startIndex; i<numBins; i++)
+	//compute all variances for means (over runs) for each bin
+	for(i=startIndex; i<numBins; i++)
     {
-        var = 0;
+        var[i] = 0;
         for (j = 0; j<runs;j++)
         {
-            var += pow((mean[i]- histogram[j][i]),2);
+            var[i] += pow((mean[i]- histogram[j][i]),2);
         }
-        var = sqrt(var/(runs-1));
+        var[i] = sqrt(var[i]/(runs-1));
+    }
 
+	//print out means and variances per bin, perform normation so that total sum of means over bins is 1
+    for(i=startIndex; i<numBins; i++)
+    {
         //if histogram labels start at 0, then add offset of 1 in order to avoid fitting problems (division by zero)
         if (startIndex == 0)
         {
-            fprintf(file,"%d %.10f %.10f \n", i+1, mean[i], var);
+            fprintf(file,"%d %.10f %.10f %.10f %.10f \n", i+1, mean[i], mean[i]/meanSum, var[i], var[i]/meanSum);
         }
         else
         {
-            fprintf(file,"%d %.10f %.10f \n", i, mean[i], var);
+            fprintf(file,"%d %.10f %.10f %.10f %.10f \n", i, mean[i], mean[i]/meanSum, var[i], var[i]/meanSum);
         }
     }
 }
@@ -533,7 +529,7 @@ void gs_all_pair_shortest_paths(gs_graph_t *g,double **dist,int weighted)
         }
     }
     //perform floid warshall algo
-    for ( k=0; k<g->num_nodes;k++)
+    for (k=0; k<g->num_nodes;k++)
     {
         for ( i=0; i<g->num_nodes;i++)
         {
@@ -550,20 +546,21 @@ void gs_all_pair_shortest_paths(gs_graph_t *g,double **dist,int weighted)
 
 /**************fillHistogramDiscrete() **************/
 /** for a given dist matrix with integer values   **/
-/** packs the distances (representing shortest paths) into bins of histogram 	   **/
-/** PARAMETERS: (*)= return-parameter          			   **/
-/**                dist: distance matrix 		       **/
-/**                histogram: given histogram  		       **/
-/**                n: number of Nodes          	     	   **/
+/** packs the distances (representing shortest paths) into bins of histogram 	    **/
+/** PARAMETERS: (*)= return-parameter          			   							**/
+/**                dist: distance matrix 		       								**/
+/**                histogram: given histogram  		       							**/
+/**                k: current row in histogram matrix (corresponds to run number)   **/
+/**                n: number of Nodes          	     	   							**/
 /*********************************************/
-void fillHistogramDiscrete(double **dist, double ***histogram, int k, int n)
+void fillHistogramDiscrete(double **dist, double **histogram, int k, int n)
 {
     int i,j;
     for (i=0;i<n;i++)
     {
         for (j=i+1;j<n;j++)
         {
-            (*histogram)[k][(int)dist[i][j]]++;
+            histogram[k][(int)dist[i][j]]++;
         }
     }
 }
@@ -576,10 +573,11 @@ void fillHistogramDiscrete(double **dist, double ***histogram, int k, int n)
 /** PARAMETERS: (*)= return-parameter                 							   **/
 /**                dist: distance matrix 			 						       **/
 /**                histogram: given histogram              					       **/
+/**                k: current row in histogram matrix (corresponds to run number)  **/
 /**                n: number of Nodes               					     	   **/
 /**                numBins: number of Bins             					     	   **/
 /*********************************************/
-void fillHistogramContinuous(double **dist, double **histogram,int n, int numBins)
+void fillHistogramContinuous(double **dist, double **histogram,int k, int n, int numBins)
 {
     int i,j;
 
@@ -613,11 +611,11 @@ void fillHistogramContinuous(double **dist, double **histogram,int n, int numBin
             {
                 if (dist[i][j] == maxDist)
                 {
-                    (*histogram)[numBins-1]++;
+                    histogram[k][numBins-1]++;
                 }
                 else
                 {
-                    (*histogram)[(int)(floor((dist[i][j] - minDist) / binWidth))]++;
+                    histogram[k][(int)(floor((dist[i][j] - minDist) / binWidth))]++;
                 }
             }
         }
@@ -670,12 +668,12 @@ void runExperiments(int runs, int n, int m)
         dist[i] = (double*)malloc(sizeof(double)*n);
     }
 
-    //perform runs
+    //perform runs and store results per run
     double **histogram;
     histogram = (double**)malloc(sizeof(double*)*runs);
     for (i=0;i<runs;i++)
     {
-        histogram[i] = (double*)malloc(sizeof(double)*n);
+        histogram[i] = (double*)calloc(n,sizeof(double));
     }
     for (k=0;k<runs;k++)
     {
@@ -687,7 +685,7 @@ void runExperiments(int runs, int n, int m)
         gs_all_pair_shortest_paths(g,dist,0);
 
         //create histogram from distance matrix
-        fillHistogramDiscrete(dist,&histogram,k,n);
+        fillHistogramDiscrete(dist,histogram,k,n);
     }
 
     //output in file
@@ -722,12 +720,12 @@ void runExperimentsConstant(int runs, int n, int m, double k_0)
         dist[i] = (double*)malloc(sizeof(double)*n);
     }
 
-    //perform runsdouble **histogram;
+    //perform runs and store results per run
     double **histogram;
     histogram = (double**)malloc(sizeof(double*)*runs);
     for (i=0;i<runs;i++)
     {
-        histogram[i] = (double*)malloc(sizeof(double)*n);
+        histogram[i] = (double*)calloc(n,sizeof(double));
     }
     for (k=0;k<runs;k++)
     {
@@ -739,7 +737,7 @@ void runExperimentsConstant(int runs, int n, int m, double k_0)
         gs_all_pair_shortest_paths(g,dist,0);
 
         //create histogram from distance matrix
-        fillHistogramDiscrete(dist,&histogram,k,n);
+        fillHistogramDiscrete(dist,histogram,k,n);
     }
 
     //output in file
@@ -772,7 +770,13 @@ void runExperimentsPlanar(int runs, int n)
 
     //reasonable number of bins for histogram according to literature
     int numBins = sqrt(n);
-    double *histogram = (double*)malloc(sizeof(double)*numBins);
+ 	//perform runs and store results per run
+    double **histogram;
+    histogram = (double**)malloc(sizeof(double*)*runs);
+    for (i=0;i<runs;i++)
+    {
+        histogram[i] = (double*)calloc(n,sizeof(double));
+    }
     for (k=0;k<runs;k++)
     {
         //init planar graph evenly distributed in square [0,1]² of size n
@@ -782,7 +786,7 @@ void runExperimentsPlanar(int runs, int n)
         gs_all_pair_shortest_paths(g,dist,1);
 
         //create histogram from distance matrix
-        //     fillHistogramContinuous(dist,&histogram,n,numBins);
+        fillHistogramContinuous(dist,histogram,k,n,numBins);
     }
     printDistances(dist,  n, "OutputPlanar_Normed/dists.dat");
     printedges(g, n,  "OutputPlanar_Normed/edges.dat");
@@ -790,7 +794,7 @@ void runExperimentsPlanar(int runs, int n)
     //output in file
     char filename[1000];
     sprintf(filename, "OutputPlanar_Normed/histogram_N%d.dat", n);
-    //   printHistogramNormed(histogram, n, filename, numBins, 0);
+    printHistogramNormed(histogram, n, filename, numBins, 0,runs);
 
     free(histogram);
 }
