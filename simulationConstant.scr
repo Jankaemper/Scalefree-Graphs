@@ -4,6 +4,6 @@ for N in 50 100 200 400
 do
 for k_0 in -1.5 -0.5 0 0.5 2
 do
-./shortest_path_constant 2 $N 2 $k_0
+./shortest_path 2 $N 2 $k_0
 done
 done
