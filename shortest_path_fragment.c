@@ -442,7 +442,7 @@ void printHistogramNormed(double **histogram, int n, char destination[], int num
     FILE *file;
     file = fopen(destination, "w");
 
-	//compute all means (over runs) for each bin
+    //compute all means (over runs) for each bin
     for(i=startIndex; i<numBins; i++)
     {
         mean[i] = 0;
@@ -451,11 +451,11 @@ void printHistogramNormed(double **histogram, int n, char destination[], int num
             histogram[j][i] = histogram[j][i];
             mean[i] += histogram[j][i];
         }
-		mean[i] /= runs;
-		meanSum += mean[i];
+        mean[i] /= runs;
+        meanSum += mean[i];
     }
-	//compute all variances for means (over runs) for each bin
-	for(i=startIndex; i<numBins; i++)
+    //compute all variances for means (over runs) for each bin
+    for(i=startIndex; i<numBins; i++)
     {
         var[i] = 0;
         for (j = 0; j<runs;j++)
@@ -465,7 +465,7 @@ void printHistogramNormed(double **histogram, int n, char destination[], int num
         var[i] = sqrt(var[i]/(runs-1));
     }
 
-	//print out means and variances per bin, perform normation so that total sum of means over bins is 1
+    //print out means and variances per bin, perform normation so that total sum of means over bins is 1
     for(i=startIndex; i<numBins; i++)
     {
         //if histogram labels start at 0, then add offset of 1 in order to avoid fitting problems (division by zero)
@@ -742,7 +742,7 @@ void runExperimentsConstant(int runs, int n, int m, double k_0)
     //output in file
     char filename[1000];
     sprintf(filename, "Output_constant/histogram_N%d_M%d_k%f.dat", n, m, k_0);
-     printHistogramNormed(histogram, n, filename, n, 1, runs);
+    printHistogramNormed(histogram, n, filename, n, 1, runs);
 
     free(histogram);
 }
@@ -769,7 +769,7 @@ void runExperimentsPlanar(int runs, int n)
 
     //reasonable number of bins for histogram according to literature
     int numBins = sqrt(n);
- 	//perform runs and store results per run
+    //perform runs and store results per run
     double **histogram;
     histogram = (double**)malloc(sizeof(double*)*runs);
     for (i=0;i<runs;i++)
@@ -806,15 +806,17 @@ void runExperimentsPlanar(int runs, int n)
 /**                run: number of runs 			 						       	   **/
 /**                stepSize: step size for iterating over graph sizes	     	   **/
 /*********************************************/
-void runMeanExperimentsPlanar(int runs, int stepSize)
+void runMeanExperimentsPlanar(int numNodes, int stepSize)
 {
     int i,j,k,n;
+	int runs = 1000;
     gs_graph_t *g;
     FILE *file;
     file = fopen("OutputPlanar_Normed/meanValues.dat", "w");
+	double *var = (double*)malloc(sizeof(double)*n/stepSize);
 
     //write mean distance for different graph sizes into file
-    for (n = 10; n <= 1000; n=n+stepSize)
+    for (n = 10; n <= numNodes; n=n+stepSize)
     {
         //init array to 0
         double **dist = (double**)malloc(sizeof(double*)*n);
@@ -824,6 +826,7 @@ void runMeanExperimentsPlanar(int runs, int stepSize)
         }
         //perform runs
         double meanShortestPath= 0;
+
         for (k=0;k<runs;k++)
         {
             //init planar graph evenly distributed in square [0,1]² of size n
@@ -832,13 +835,23 @@ void runMeanExperimentsPlanar(int runs, int stepSize)
             //compute all shortest paths with floyd warshall and write result in dist matrix
             gs_all_pair_shortest_paths(g,dist,1);
 
-            //calc mean over all distances
-            meanShortestPath += computeMeanShortestPath(dist,n);
+            //calc mean and variance over all distances
+			double pathLength = computeMeanShortestPath(dist,n);
+            meanShortestPath += pathLength;
+			var[k] = pathLength;
         }
-
         meanShortestPath = meanShortestPath/runs;
-
-        fprintf(file,"%d %f\n", n, meanShortestPath);
-        printf("%d %f\n", n, meanShortestPath);
+		//compute final variance
+		double variance = 0;
+		for(k=0;k<runs;k++)
+		{
+			for (j = 0; j<runs;j++)
+			{
+			    variance += pow(var[i]- meanShortestPath,2);
+			}
+			variance = sqrt(variance/(runs-1));
+		}
+        fprintf(file,"%d %f %f\n", n, meanShortestPath, variance);
+        printf("%d %f %f\n", n, meanShortestPath, variance);
     }
 }
