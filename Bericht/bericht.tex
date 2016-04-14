@@ -134,8 +134,22 @@ done
 \end{lstlisting}
 
 \subsection{Auswertung mit Gnuplot}
-Basierend auf denen durch die Skripte erzeugten Dateien mit Endung .plt können Gnuplot Skripte verwendet werden, die die vorliegenden Daten graphisch darstellen und ein Fitting and die gewünschte Verteilung durchführen. Diese Skripte befinden sich im Ordner \textit{Plotscripts} und können in gnuplot mit dem \textit{load} Befehl geladen werden.
-
+Basierend auf denen durch die Skripte erzeugten Dateien mit Endung .plt können Gnuplot Skripte verwendet werden, die die vorliegenden Daten graphisch darstellen und ein Fitting and die gewünschte Verteilung durchführen. Diese Skripte befinden sich im Ordner \textit{Plotscripts} und können in gnuplot mit dem \textit{load} Befehl geladen werden. Exemplarisch sei hier ein Auszug des Gnuplot Skripts der Ergebnisse für skalenfreie Graphen mit Parameter $m=1$ und Fit an eine Normalverteilung gegeben:
+\begin{lstlisting}
+set datafile missing '0.0000000000'
+set multiplot layout 3,1
+set key right reverse Right
+set logscale y
+f(x) = 1/((2*pi*std**2)**0.5) * exp(-(x-nu)**2/(2*std**2))
+std = 50
+nu = 6
+set title "n=50"
+fit f(x) "Output_Normed/histogram_N50_M1.dat" using 1:3 via std, nu
+plot f(x) title "", "Output_Normed/histogram_N50_M1.dat" using 1:3:5 with yerrorbars title ""
+.
+.
+.
+\end{lstlisting}
 
 \section{Resultate}
 \subsection{Skalenfreie Graphen: Normales preferential attachment}
@@ -144,7 +158,7 @@ Für die skalenfreien Graphen wurde folgende Simulationen durchgeführt (Aufruf:
 \item[\quad Größe $n$:] $50,100,200,400$
 \item[\quad Parameter $m$:] $1,2$
 \end{itemize}
-Für $m=1$ haben wir die Ergebnisse in Abbildung \ref{fig:m1} erhalten. Die unterschiedliche Beschriftung der y-Achse ist der Tatsache geschuldet, dass für die Normalverteilung eine Normierung durchgeführt werden musste, was für das Potenzgesetz hier nicht notwendig war. Die Kurven sind aber in allen Abbildungen, die folgen, durch Skalierung identisch.
+Für $m=1$ haben wir die Ergebnisse in Abbildung \ref{fig:m1} erhalten. In grün sind die Simulationswerte inlusive Fehlerbalken abgebildet, in rot der jeweilige Fit. Da die Skala auf der y-Achse logarithmisch ist sind auch die Fehlerbalken entsprechend verzehrt und gehen am unteren Ende der Skala ins unendliche. 
 
 \begin{figure}[h!]
 \begin{subfigure}{.5\textwidth}
@@ -161,7 +175,7 @@ Für $m=1$ haben wir die Ergebnisse in Abbildung \ref{fig:m1} erhalten. Die unte
 \label{fig:m1}
 \end{figure}
 
-Unabhängig von der Anzahl an Knoten scheint der Fit an das Potenzgesetz hier wesentlich besser zu sein. Dies ist im Falle $m=2$ umgekehrt. Hier lässt sich feststellen, dass für ein Fitting an eine Normalverteilung geringere Abweichungen vorliegen. Die Ergebnisse sind in Abbildung \ref{fig:m2} zu sehen.
+Unabhängig von der Anzahl an Knoten scheint der Fit an das Potenzgesetz hier wesentlich besser zu sein. Zu beachten ist dabei allerdings, dass auch für die Normalverteilung noch der Fit innerhalb der Standarabweichung der Simulationsreihe liegt. Im Falle $m=2$ lässt sich feststellen, dass für ein Fitting an eine Normalverteilung geringere Abweichungen vorliegen. Die Ergebnisse sind in Abbildung \ref{fig:m2} zu sehen.
 
 \begin{figure}[htb!]
 \begin{subfigure}{.5\textwidth}
@@ -226,7 +240,7 @@ Die mittlere Kürzeste-Weglänge konvergiert offenbar gegen einen Wert und der F
 \end{figure}
 
 \section{Fazit}
-Lirum Larum Opsum
+Es wurden Simulationsläufe für unterschiedliche Arten von Graphen durchgeführt und die Verteilung der kürzesten Weglängen im Graphen sowie in einem Fall die Abhängigkeit des kürzesten Weges von der Graphgörße betrachtet. Für skalenfreie Graphen lässt sich festhalten, dass die Verteilung der kürzesten Weglängen im Graphen für $m=1$ analog zu einem Potenzgesetz verhält, wohingegen für $m=2$ eine Normalverteilung besser passt. Offenbar hält für $m=1$ der Einfluss der Gradverteilung (Kanten pro Knoten) auf die kürzeste Weglängen Verteilung noch an, da beide ähnlich verteilt sind. Verdoppelt man den Parameter $m$ jedoch, so löst sich dieser Zusamenhang auf und die Wege sind nun normalverteilt. Bei den ebenen Zufallsgraphen liefert die Normalverteilung den marginal besseren Fit, wobei die Abweichung im Vergleich zum Fit an Potenzgesetze sich nicht wesentlich unterscheidet.
 
 \newpage
 
