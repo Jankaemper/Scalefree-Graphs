@@ -37,7 +37,8 @@ Die Größe des Graphen wird über die Anzahl der Knoten $n$ definiert. Um eine 
 Zur Berechnung der kürzesten Wege wird auf den Floyd-Warshall Algorithmus zurückgegriffen, der in kubischer Laufzeit kürzeste Wege für alle Knotenpaare in einem ungerichteten Ausgangsgraphen liefert (siehe \cite{Floyd}).
 Experimente mit unterschiedlich parametrisierten Graphen wurden dann durch ein Fitting an Normalverteilung und Exponentialverteilung in Gnuplot ausgewertet.\\
 
-In den Zusatzaufgaben wurde zum einen ein allgemeines preferential attachment umgesetzt, das zu einer veränderten Gradverteilung pro Knoten führt. Zum anderen wurde eine weitere Familie von Graphen betrachtet. Hierbei handelt es sich um ebene Zufallsgraphen in der $[0,1]^2$ Ebene, wobei Kanten zwischen zweien der gleichmäßig in der Ebene verteilten Knoten mit einer Wahrscheinlichkeit hinzugefügt werden, die kubisch in der euklidischen Distanz der Knoten abnimmt (hier: $f=1, \alpha=3$). 
+In den Zusatzaufgaben wurde zum einen ein allgemeines preferential attachment umgesetzt, das zu einer veränderten Gradverteilung pro Knoten führt. Anders als bei der vorher verwendeten Methode, kann die Wahrscheinlichtkeit mit der ein Knoten mit dem neuen Knoten verbunden wird, zusätzlich durch den Parameter $k_0$ beeinflusst werden.
+Zum anderen wurde eine weitere Familie von Graphen betrachtet. Hierbei handelt es sich um ebene Zufallsgraphen in der $[0,1]^2$ Ebene, wobei Kanten zwischen zweien der gleichmäßig in der Ebene verteilten Knoten mit einer Wahrscheinlichkeit hinzugefügt werden, die kubisch in der euklidischen Distanz der Knoten abnimmt (hier: $f=1, \alpha=3$). 
 \begin{equation*}
 p_{ij} = f \cdot (1+\sqrt{N \cdot \Pi}d_{ij}/\alpha)^{-\alpha}
 \end{equation*}
@@ -240,7 +241,12 @@ Die mittlere Kürzeste-Weglänge konvergiert offenbar gegen einen Wert und der F
 \end{figure}
 
 \section{Fazit}
-Es wurden Simulationsläufe für unterschiedliche Arten von Graphen durchgeführt und die Verteilung der kürzesten Weglängen im Graphen sowie in einem Fall die Abhängigkeit des kürzesten Weges von der Graphgörße betrachtet. Für skalenfreie Graphen lässt sich festhalten, dass die Verteilung der kürzesten Weglängen im Graphen für $m=1$ analog zu einem Potenzgesetz verhält, wohingegen für $m=2$ eine Normalverteilung besser passt. Offenbar hält für $m=1$ der Einfluss der Gradverteilung (Kanten pro Knoten) auf die kürzeste Weglängen Verteilung noch an, da beide ähnlich verteilt sind. Verdoppelt man den Parameter $m$ jedoch, so löst sich dieser Zusamenhang auf und die Wege sind nun normalverteilt. Bei den ebenen Zufallsgraphen liefert die Normalverteilung den marginal besseren Fit, wobei die Abweichung im Vergleich zum Fit an Potenzgesetze sich nicht wesentlich unterscheidet.
+Ziel dieses Projektes war es, verschiedene Grapharten zu untersuchen. Dabei wurde die Verteilung der kürzesten Weglängen im Graphen betrachtet. Konkret bedeutet das, dass für jeden Knoten im Graph die Weglänge zu den anderen Knoten berechnet und in ein Histogram übertragen wurde.
+Zusätzlich wurde ein Sonderfall betrachtet, der die Abhängigkeit des kürzesten Weges von der Graphgröße betrachtet. Für skalenfreie Grapen lässt sich festhalten, dass sich die Verteilung der kürzesten Weglänge im Graphen für $m=1$ analog zu einem Potenzgesetz verhält, wohingegen für $m=2$ das Verhalten einer Normalverteilung entspricht. Für skalenfreie Graphen gilt grundsätzlich, dass die Gradverteilung (Kanten pro Knoten) einer Potenzverteilung entspricht. Offenbar hält für $m=1$ der Einfluss der Gradverteilung noch an. Wird der Parameter $m$ jedoch, so löst sich dieser Zusammenhang auf und die kürzesten Wege sind nun normalverteilt. 
+Bei den ebenen Zufallsgraphen liefert die Normalverteilung den marginal besseren Fit, wobei die Abweichung im Vergleich zum Fit an Potenzgesetze sich nicht wesentlich unterscheidet
+
+\textit{
+Es wurden Simulationsläufe für unterschiedliche Arten von Graphen durchgeführt und die Verteilung der kürzesten Weglängen im Graphen sowie in einem Fall die Abhängigkeit des kürzesten Weges von der Graphgörße betrachtet. Für skalenfreie Graphen lässt sich festhalten, dass die Verteilung der kürzesten Weglängen im Graphen für $m=1$ analog zu einem Potenzgesetz verhält, wohingegen für $m=2$ eine Normalverteilung besser passt. Offenbar hält für $m=1$ der Einfluss der Gradverteilung (Kanten pro Knoten) auf die kürzeste Weglängen Verteilung noch an, da beide ähnlich verteilt sind. Verdoppelt man den Parameter $m$ jedoch, so löst sich dieser Zusamenhang auf und die Wege sind nun normalverteilt. Bei den ebenen Zufallsgraphen liefert die Normalverteilung den marginal besseren Fit, wobei die Abweichung im Vergleich zum Fit an Potenzgesetze sich nicht wesentlich unterscheidet.}
 
 \newpage
 
