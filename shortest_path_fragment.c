@@ -710,7 +710,7 @@ void runExperimentsConstant(int runs, int n, int m, double k_0)
     int i,j,k;
     gs_graph_t *g;
 
-
+    printf("Run Number %d %d %f\n", n, m, k_0);
     //init dist array
     double **dist;
     dist = (double**)malloc(sizeof(double*)*n);
