@@ -215,12 +215,12 @@ Es zeigt sich, dass auch hier eine Normalverteilung die bessere Approximation li
 \begin{figure}[htb!]
 \begin{subfigure}{.5\textwidth}
   \centering
-  \includegraphics[width=\linewidth]{../Results/wErrorbars_Normal_Planar.png}
+  \includegraphics[width=1\linewidth]{../Results/wErrorbars_Normal_Planar.png}
   \caption{Fitting an eine Normalverteilung}
 \end{subfigure}%
 \begin{subfigure}{.5\textwidth}
   \centering
-  \includegraphics[width=\linewidth]{../Results/wErrorbars_Power_Planar.png}
+  \includegraphics[width=1\linewidth]{../Results/wErrorbars_Power_Planar.png}
   \caption{Fitting an Potenzgesetz}
 \end{subfigure}
 \caption{Ebene Zufallsgraphen}
@@ -232,21 +232,25 @@ Für ebene Zufallsgraphen wurde zusätzlich untersucht, wie sich die mittlere k�
 \begin{itemize}
 \item[\quad Größe $n$:] $10..1000$, in 10er Schritten
 \end{itemize}
-Die mittlere Kürzeste-Weglänge konvergiert offenbar gegen einen Wert und der Fit an Potenzgesetze $N^\beta$ scheint gut zu passen. Wir erhalten hier einen Wert von $B= -0.0741915$ mit einem Fehler von $+/- 0.001517$.
-\begin{figure}[!htb]
+Die mittlere Kürzeste-Weglänge konvergiert scheinbar gegen einen Wert und der Fit an Potenzgesetze $N^\beta$ scheint gut zu passen. Wir erhalten hier einen Wert von $B= -0.0741915$ mit einem Fehler von $+/- 0.001517$. In Abbildung \ref{fig:planarMean} ist der Plot einmal mit logarithmischer y-Achse und einmal mit normaler Skala dargestellt.
+
+\begin{figure}[htb!]
+\begin{subfigure}{.5\textwidth}
   \centering
-  \includegraphics[width=\linewidth]{../Results/Power_PlanarMean.png}
+  \includegraphics[width=1\linewidth]{../Results/wErrorbars_Power_PlanarMean.png}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{../Results/wErrorbars_Power_PlanarMean_NoLogscale.png}
+\end{subfigure}
   \caption{Fitting Power Law}
 \label{fig:planarMean}
 \end{figure}
 
 \section{Fazit}
-Ziel dieses Projektes war es, verschiedene Grapharten zu untersuchen. Dabei wurde die Verteilung der kürzesten Weglängen im Graphen betrachtet. Konkret bedeutet das, dass für jeden Knoten im Graph die Weglänge zu den anderen Knoten berechnet und in ein Histogram übertragen wurde.
-Zusätzlich wurde ein Sonderfall betrachtet, der die Abhängigkeit des kürzesten Weges von der Graphgröße betrachtet. Für skalenfreie Grapen lässt sich festhalten, dass sich die Verteilung der kürzesten Weglänge im Graphen für $m=1$ analog zu einem Potenzgesetz verhält, wohingegen für $m=2$ das Verhalten einer Normalverteilung entspricht. Für skalenfreie Graphen gilt grundsätzlich, dass die Gradverteilung (Kanten pro Knoten) einer Potenzverteilung entspricht. Offenbar hält für $m=1$ der Einfluss der Gradverteilung noch an. Wird der Parameter $m$ jedoch, so löst sich dieser Zusammenhang auf und die kürzesten Wege sind nun normalverteilt. 
+Ziel dieses Projektes war es, verschiedene Grapharten zu untersuchen. Dabei wurde die Verteilung der kürzesten Weglängen im Graphen betrachtet. Konkret bedeutet das, dass für jeden Knoten im Graph die Weglänge zu den anderen Knoten berechnet und in ein Histogramm übertragen wurde.
+Zusätzlich wurde ein Sonderfall betrachtet, der die Abhängigkeit des mittleren kürzesten Weges von der Graphgröße betrachtet. Für skalenfreie Grapen lässt sich festhalten, dass sich die Verteilung der kürzesten Weglängen im Graphen für $m=1$ analog zu einem Potenzgesetz verhält, wohingegen für $m=2$ das Verhalten einer Normalverteilung entspricht. Für skalenfreie Graphen gilt grundsätzlich, dass die Gradverteilung (Kanten pro Knoten) einer Potenzverteilung entspricht. Offenbar hält für $m=1$ der Einfluss der Gradverteilung noch an. Wird der Parameter $m$ jedoch weiter erhöht, so löst sich dieser Zusammenhang auf und die kürzesten Wege sind nun eher normalverteilt. 
 Bei den ebenen Zufallsgraphen liefert die Normalverteilung den marginal besseren Fit, wobei die Abweichung im Vergleich zum Fit an Potenzgesetze sich nicht wesentlich unterscheidet
-
-\textit{
-Es wurden Simulationsläufe für unterschiedliche Arten von Graphen durchgeführt und die Verteilung der kürzesten Weglängen im Graphen sowie in einem Fall die Abhängigkeit des kürzesten Weges von der Graphgörße betrachtet. Für skalenfreie Graphen lässt sich festhalten, dass die Verteilung der kürzesten Weglängen im Graphen für $m=1$ analog zu einem Potenzgesetz verhält, wohingegen für $m=2$ eine Normalverteilung besser passt. Offenbar hält für $m=1$ der Einfluss der Gradverteilung (Kanten pro Knoten) auf die kürzeste Weglängen Verteilung noch an, da beide ähnlich verteilt sind. Verdoppelt man den Parameter $m$ jedoch, so löst sich dieser Zusamenhang auf und die Wege sind nun normalverteilt. Bei den ebenen Zufallsgraphen liefert die Normalverteilung den marginal besseren Fit, wobei die Abweichung im Vergleich zum Fit an Potenzgesetze sich nicht wesentlich unterscheidet.}
 
 \newpage
 

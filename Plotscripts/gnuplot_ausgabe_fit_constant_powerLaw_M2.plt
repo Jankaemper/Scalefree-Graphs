@@ -1,4 +1,3 @@
-set datafile missing "0.0000000000"
 set multiplot layout 2,2
 set logscale y
 set key right reverse Right
@@ -10,9 +9,9 @@ set title "n=50"
 fit f(x) "Output_constant/histogram_N50_M2_k0.500000.dat" using 1:3 via k, l, C
 plot f(x) title "", "Output_constant/histogram_N50_M2_k0.500000.dat" using 1:3:5 with yerrorbars title ""
 g(x) = k_2 * (C_2/x)**(l_2*x)
-k_2=0.1
-l_2=1.1
-C_2=10
+k_2=0.0003
+l_2=2.3
+C_2=8.4
 set title "n=100"
 fit g(x) "Output_constant/histogram_N100_M2_k0.500000.dat" using 1:3 via k_2, l_2, C_2
 plot g(x) title "", "Output_constant/histogram_N50_M2_k0.500000.dat" using 1:3:5 with yerrorbars title ""
