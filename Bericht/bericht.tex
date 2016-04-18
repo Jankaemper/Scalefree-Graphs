@@ -204,6 +204,40 @@ Für skalenfreie Graphen wurde die Funktion $preferential$ $attachment$ durch ei
 \item[\quad Konstante $k_0$:] $-1.5,-0.5,0.5,2$
 \end{itemize}
 
+Die Ergebnisse für positive $k_0$ Werte, werden in Abbildung \ref{fig:k_0.52} dargestellt. Vergleicht man nun, dass allgemeine preferential attachment und mit den vorherigen Ergebnisse aus Sektion 3.1 kann man erkennt, dass die Ergebnisse für $k_0$ = 0.5 nahezu identisch sind. Betrachet man jedoch die Kurve mit $N$ = 50 und $k_0$ = 2 ändert sich die Verteilung der kürzesten Wege und es kommen im Schnitt längere kürzeste Wege zustande. Für $k_0$ bedeutet das, dass je größer $k_0$ gewählt wird desto stärker wird der Einfluss bei der Knotenverteilung. Durch $k_0$ erhält jeder Knoten im Graph zusätzlich eine Wahrscheinlichkeit mit einem neuen Knoten verbunden zu werden.
+
+\begin{figure}[h!]
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{../Results/Power_constant_k05.png}
+  \caption{Fitting mit $k_0$ = 0.5}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{../Results/Power_constant_k2.png}
+  \caption{Fitting mit $k_0$ = 2}
+\end{subfigure}
+\caption{Skalenfreie Graphen mit $m=2$}
+\label{fig:k_0.52}
+\end{figure}
+
+In Abbildung \ref{fig:k_-0.51.5} werden die Ergebnisse für negative $k_0$ Werte betrachet. Die Ergebnisse für negative $k_0$ Werte verhalten sich analog zu den positiven. Für $k_0$ = -0.5 ist der Einfluss der Konstante nicht sehr groß. Die Werte decken sich ungefähr mit denen aus Sektion 3.1. Für $k_0$ = -1.5 hingegen, lassen sich schon größere Unterschiede ausmachen: die Länge der kürzesten Wege sinkt im Schnitt.
+
+\begin{figure}[h!]
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{../Results/Power_constant_k-05.png}
+  \caption{Fitting mit $k_0$ = -0.5}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{../Results/Power_constant_k-15.png}
+  \caption{Fitting mit $k_0$ = -1.5}
+\end{subfigure}
+\caption{Skalenfreie Graphen mit $m=2$}
+\label{fig:k_-0.51.5}
+\end{figure}
+\newpage
 
 \subsection{Ebene Zufallsgraphen}
 Für ebene Zufallsgraphen wurden die gleichen Simulationen wie für skalenfreie Graphen durchgeführt (Aufruf: $simulationPlanar.scr$). Der Parameter $m$ spielt hier keine Rolle.
@@ -233,6 +267,7 @@ Für ebene Zufallsgraphen wurde zusätzlich untersucht, wie sich die mittlere k�
 \item[\quad Größe $n$:] $10..1000$, in 10er Schritten
 \end{itemize}
 Die mittlere Kürzeste-Weglänge konvergiert scheinbar gegen einen Wert und der Fit an Potenzgesetze $N^\beta$ scheint gut zu passen. Wir erhalten hier einen Wert von $B= -0.0741915$ mit einem Fehler von $+/- 0.001517$. In Abbildung \ref{fig:planarMean} ist der Plot einmal mit logarithmischer y-Achse und einmal mit normaler Skala dargestellt.
+
 
 \begin{figure}[htb!]
 \begin{subfigure}{.5\textwidth}
