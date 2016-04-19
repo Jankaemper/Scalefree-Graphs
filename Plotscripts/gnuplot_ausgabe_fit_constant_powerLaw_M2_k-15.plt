@@ -3,6 +3,7 @@ set term png
 set output 'Results/Power_constant_k-15.png'
 set multiplot layout 2,2
 set logscale y
+set xrange [0:7]
 set key right reverse Right
 f(x) = k * (C/x)**(l*x)
 k=0.01

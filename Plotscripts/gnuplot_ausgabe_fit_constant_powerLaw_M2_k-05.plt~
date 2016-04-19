@@ -1,6 +1,6 @@
 set datafile missing '0.0000000000'
 set term png
-set output 'k-05.png'
+set output 'Results/Power_constant_k-05.png'
 set multiplot layout 2,2
 set logscale y
 set key right reverse Right
